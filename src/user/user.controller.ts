@@ -17,9 +17,4 @@ export class UserController {
     getUserById(@Param('id') id: number): Promise<ResponseUserDto> {
         return this.userService.getById(id);
     }
-
-    @Post()
-    createUser(@Body() userDto: CreateUserDto): Promise<ResponseUserDto> {
-        return this.userService.create(userDto);
-    }
 }

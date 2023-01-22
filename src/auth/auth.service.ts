@@ -6,6 +6,7 @@ import {JwtService} from "@nestjs/jwt";
 import * as bcrypt from "bcryptjs";
 import {UserModel} from "../user/user.model";
 import {ResponseUserDto} from "../user/dto/response-user.dto";
+import {TokenDto} from "./dto/token.dto";
 
 @Injectable()
 export class AuthService {
@@ -13,12 +14,12 @@ export class AuthService {
     constructor(private userService: UserService,
                 private jwtService: JwtService) {}
 
-    async login(userDto: LoginUserDto): Promise<{token: string}> {
+    async login(userDto: LoginUserDto): Promise<TokenDto> {
         const user = await this.validateUser(userDto);
         return this.generateToken(user);
     }
 
-    async registration(userDto: CreateUserDto) {
+    async registration(userDto: CreateUserDto): Promise<TokenDto> {
         const candidate = await this.userService.getByEmail(userDto.email);
         if (candidate) {
             throw new HttpException({message: 'Пользователь с таким email уже существует'}, HttpStatus.BAD_REQUEST)
@@ -28,7 +29,7 @@ export class AuthService {
         return this.generateToken(user);
     }
 
-    private generateToken(user: ResponseUserDto): {token: string} {
+    private generateToken(user: ResponseUserDto): TokenDto {
         return {
             token: this.jwtService.sign({...user})
         }

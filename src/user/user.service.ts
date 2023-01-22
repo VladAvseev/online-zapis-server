@@ -14,16 +14,6 @@ export class UserService {
                 private roleService: RoleService,
                 private cityService: CityService,) {}
 
-    async getAll(): Promise<ResponseUserDto[]> {
-        const users: UserModel[] = await this.userRepository.findAll({include: {all: true}});
-        return users.map(user => ResponseUserDto.toResponseUserDto(user));
-    }
-
-    async getById(id: number): Promise<ResponseUserDto> {
-        const user: UserModel = await this.userRepository.findByPk(id, {include: {all: true}});
-        return ResponseUserDto.toResponseUserDto(user);
-    }
-
     async create(userDto: CreateUserDto): Promise<ResponseUserDto> {
         const user: UserModel = await this.userRepository.create(userDto);
         const role: RoleModel = await this.roleService.getByValue("CLIENT");
@@ -32,6 +22,16 @@ export class UserService {
         await user.$set('city', city);
         user.city = city;
         user.roles = [role];
+        return ResponseUserDto.toResponseUserDto(user);
+    }
+
+    async getAll(): Promise<ResponseUserDto[]> {
+        const users: UserModel[] = await this.userRepository.findAll({include: {all: true}});
+        return users.map(user => ResponseUserDto.toResponseUserDto(user));
+    }
+
+    async getById(id: number): Promise<ResponseUserDto> {
+        const user: UserModel = await this.userRepository.findByPk(id, {include: {all: true}});
         return ResponseUserDto.toResponseUserDto(user);
     }
 
