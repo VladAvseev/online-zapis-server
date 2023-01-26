@@ -1,7 +1,8 @@
-import {BelongsTo, BelongsToMany, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
+import {BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasOne, Model, Table} from "sequelize-typescript";
 import {RoleModel} from "../role/role.model";
 import {UserRoleModel} from "../role/user-role.model";
 import {CityModel} from "../city/city.model";
+import {TokenModel} from "../token/token.model";
 
 interface UserCreationAttrs {
     name: string;
@@ -37,4 +38,7 @@ export class UserModel extends Model<UserModel, UserCreationAttrs> {
 
     @BelongsToMany(() => RoleModel, () => UserRoleModel)
     roles: RoleModel[];
+
+    @HasOne(() => TokenModel)
+    token: TokenModel;
 }
