@@ -7,7 +7,7 @@ export class TokenModel extends Model<TokenModel, SaveTokenDto>{
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
 
-    @Column({ type: DataType.STRING, allowNull: false })
+    @Column({ type: DataType.TEXT, allowNull: false })
     refresh_token: string;
 
     @ForeignKey(() => UserModel)

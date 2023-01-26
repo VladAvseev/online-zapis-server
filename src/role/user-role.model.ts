@@ -1,4 +1,4 @@
-import {BelongsToMany, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
+import {Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
 import {UserModel} from "../user/user.model";
 import {RoleModel} from "./role.model";
 

@@ -16,6 +16,7 @@ export class AuthService {
     async login(userDto: LoginUserDto): Promise<TokenDto> {
         const user = await this.validateUser(userDto);
         const tokens: TokenDto = this.tokenService.generateTokens(user);
+        await this.tokenService.saveToken({user_id: user.id, refresh_token: tokens.refreshToken});
         return tokens;
     }
 
@@ -29,6 +30,10 @@ export class AuthService {
         const tokens: TokenDto = this.tokenService.generateTokens(user);
         await this.tokenService.saveToken({user_id: user.id, refresh_token: tokens.refreshToken});
         return tokens;
+    }
+
+    async logout(id: number) {
+        await this.tokenService.remove(id);
     }
 
     private async validateUser(userDto: LoginUserDto): Promise<ResponseUserDto> {
