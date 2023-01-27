@@ -13,14 +13,14 @@ export class AuthService {
     constructor(private userService: UserService,
                 private tokenService: TokenService) {}
 
-    async login(userDto: LoginUserDto): Promise<TokenDto> {
+    async login(userDto: LoginUserDto): Promise<ResponseUserDto> {
         const user = await this.validateUser(userDto);
         const tokens: TokenDto = this.tokenService.generateTokens(user);
         await this.tokenService.saveToken({user_id: user.id, refresh_token: tokens.refreshToken});
-        return tokens;
+        return {...tokens, ...user};
     }
 
-    async registration(userDto: CreateUserDto): Promise<TokenDto> {
+    async registration(userDto: CreateUserDto): Promise<ResponseUserDto> {
         const candidate = await this.userService.getByEmail(userDto.email);
         if (candidate) {
             throw new HttpException({message: 'Пользователь с таким email уже существует'}, HttpStatus.BAD_REQUEST)
@@ -29,7 +29,7 @@ export class AuthService {
         const user = await this.userService.create({...userDto, password: hashPassword});
         const tokens: TokenDto = this.tokenService.generateTokens(user);
         await this.tokenService.saveToken({user_id: user.id, refresh_token: tokens.refreshToken});
-        return tokens;
+        return {...tokens, ...user};
     }
 
     async logout(id: number) {

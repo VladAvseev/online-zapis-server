@@ -14,6 +14,8 @@ export class ResponseUserDto {
     phone: string;
     city: CityModel;
     roles: ResponseUserRole[];
+    accessToken: string;
+    refreshToken: string;
 
     constructor(id: number, name: string, email: string, phone: string, city: CityModel, roles: RoleModel[]) {
         this.id = id;
