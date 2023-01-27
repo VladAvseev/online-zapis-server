@@ -4,13 +4,13 @@ import {ConfigModule} from "@nestjs/config";
 import {SequelizeModule} from "@nestjs/sequelize";
 import { RoleModule } from './role/role.module';
 import { CityModule } from './city/city.module';
-import {CityModel} from "./city/city.model";
-import {RoleModel} from "./role/role.model";
-import {UserModel} from "./user/user.model";
-import {UserRoleModel} from "./role/user-role.model";
+import {CityModel} from "./city/model/city.model";
+import {RoleModel} from "./role/model/role.model";
+import {UserModel} from "./user/model/user.model";
+import {UserRoleModel} from "./role/model/user-role.model";
 import { AuthModule } from './auth/auth.module';
 import { TokenModule } from './token/token.module';
-import {TokenModel} from "./token/token.model";
+import {TokenModel} from "./token/model/token.model";
 
 @Module({
   imports: [

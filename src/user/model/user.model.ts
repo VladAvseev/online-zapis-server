@@ -1,8 +1,8 @@
 import {BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasOne, Model, Table} from "sequelize-typescript";
-import {RoleModel} from "../role/role.model";
-import {UserRoleModel} from "../role/user-role.model";
-import {CityModel} from "../city/city.model";
-import {TokenModel} from "../token/token.model";
+import {RoleModel} from "../../role/model/role.model";
+import {UserRoleModel} from "../../role/model/user-role.model";
+import {CityModel} from "../../city/model/city.model";
+import {TokenModel} from "../../token/model/token.model";
 
 interface UserCreationAttrs {
     name: string;

@@ -1,5 +1,5 @@
 import {Column, DataType, HasMany, Model, Table} from 'sequelize-typescript';
-import { UserModel } from '../user/user.model';
+import { UserModel } from '../../user/model/user.model';
 
 interface CityCreationAttrs {
   value: string;

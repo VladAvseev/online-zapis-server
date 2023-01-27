@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import {InjectModel} from "@nestjs/sequelize";
-import {CityModel} from "./city.model";
+import {CityModel} from "./model/city.model";
 import {CreateCityDto} from "./dto/create-city.dto";
 
 @Injectable()

@@ -3,7 +3,7 @@ import { TokenController } from './token.controller';
 import { TokenService } from './token.service';
 import {JwtModule} from "@nestjs/jwt";
 import {SequelizeModule} from "@nestjs/sequelize";
-import {TokenModel} from "./token.model";
+import {TokenModel} from "./model/token.model";
 import {UserModule} from "../user/user.module";
 
 @Module({

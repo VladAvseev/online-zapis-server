@@ -1,12 +1,12 @@
-import {Module} from '@nestjs/common';
+import {forwardRef, Module} from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import {RoleModule} from "../role/role.module";
 import {SequelizeModule} from "@nestjs/sequelize";
-import {UserRoleModel} from "../role/user-role.model";
-import {CityModel} from "../city/city.model";
-import {RoleModel} from "../role/role.model";
-import {UserModel} from "./user.model";
+import {UserRoleModel} from "../role/model/user-role.model";
+import {CityModel} from "../city/model/city.model";
+import {RoleModel} from "../role/model/role.model";
+import {UserModel} from "./model/user.model";
 import {CityModule} from "../city/city.module";
 
 @Module({
@@ -15,7 +15,7 @@ import {CityModule} from "../city/city.module";
     imports: [
         SequelizeModule.forFeature([UserModel, RoleModel, UserRoleModel, CityModel]),
         RoleModule,
-        CityModule,
+        forwardRef(() => CityModule),
     ],
     exports: [UserService],
 })

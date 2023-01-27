@@ -4,7 +4,7 @@ import {TokenDto} from "./dto/token.dto";
 import {JwtService} from "@nestjs/jwt";
 import {SaveTokenDto} from "./dto/save-token.dto";
 import {InjectModel} from "@nestjs/sequelize";
-import {TokenModel} from "./token.model";
+import {TokenModel} from "./model/token.model";
 import {UserService} from "../user/user.service";
 
 @Injectable()
@@ -41,6 +41,11 @@ export class TokenService {
 
     validateRefreshToken(token: string): ResponseUserDto {
         const userData = this.jwtService.verify(token, {secret: process.env.JWT_REFRESH_SECRET});
+        return userData;
+    }
+
+    validateAccessToken(token: string): ResponseUserDto {
+        const userData = this.jwtService.verify(token, {secret: process.env.JWT_ACCESS_SECRET});
         return userData;
     }
 

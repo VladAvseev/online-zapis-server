@@ -1,6 +1,6 @@
 import {BelongsTo, Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
-import {UserModel} from "../user/user.model";
-import {SaveTokenDto} from "./dto/save-token.dto";
+import {UserModel} from "../../user/model/user.model";
+import {SaveTokenDto} from "../dto/save-token.dto";
 
 @Table({tableName: 'token'})
 export class TokenModel extends Model<TokenModel, SaveTokenDto>{

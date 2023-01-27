@@ -1,6 +1,6 @@
-import {RoleModel} from "../../role/role.model";
-import {UserModel} from "../user.model";
-import {CityModel} from "../../city/city.model";
+import {RoleModel} from "../../role/model/role.model";
+import {UserModel} from "../model/user.model";
+import {CityModel} from "../../city/model/city.model";
 
 interface ResponseUserRole {
     id: number;

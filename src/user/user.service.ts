@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import {InjectModel} from "@nestjs/sequelize";
-import {UserModel} from "./user.model";
+import {UserModel} from "./model/user.model";
 import {RoleService} from "../role/role.service";
 import {CreateUserDto} from "./dto/create-user.dto";
-import {RoleModel} from "../role/role.model";
-import {CityModel} from "../city/city.model";
+import {RoleModel} from "../role/model/role.model";
+import {CityModel} from "../city/model/city.model";
 import {CityService} from "../city/city.service";
 import {ResponseUserDto} from "./dto/response-user.dto";
 
