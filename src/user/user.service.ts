@@ -55,4 +55,16 @@ export class UserService {
         });
         return user;
     }
+
+    async getByPhone(phone: string): Promise<UserModel> {
+        const user: UserModel = await this.userRepository.findOne({
+            where: {
+                phone,
+            },
+            include: {
+                all: true
+            }
+        });
+        return user;
+    }
 }
