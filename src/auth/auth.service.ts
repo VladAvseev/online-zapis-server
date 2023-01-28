@@ -36,8 +36,8 @@ export class AuthService {
         return {...tokens, ...user};
     }
 
-    async logout(id: number) {
-        await this.tokenService.remove(id);
+    async logout(userDto: ResponseUserDto) {
+        await this.tokenService.remove(userDto.id);
     }
 
     private async validateUser(userDto: LoginUserDto): Promise<ResponseUserDto> {

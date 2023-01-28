@@ -5,7 +5,7 @@ interface CityCreationAttrs {
   value: string;
 }
 
-@Table({ tableName: 'city', createdAt: false, updatedAt: false })
+@Table({ tableName: 'city'})
 export class CityModel extends Model<CityModel, CityCreationAttrs> {
   @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
   id: number;

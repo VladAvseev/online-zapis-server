@@ -4,6 +4,7 @@ import { CreateUserDto } from '../user/dto/create-user.dto';
 import {LoginUserDto} from "./dto/login-user.dto";
 import {TokenDto} from "../token/dto/token.dto";
 import {JwtAuthGuard} from "./guards/jwt-auth.guard";
+import {ResponseUserDto} from "../user/dto/response-user.dto";
 
 @Controller('auth')
 export class AuthController {
@@ -19,9 +20,9 @@ export class AuthController {
         return this.authService.registration(userDto);
     }
 
-    @Post('/logout/:id')
+    @Post('/logout')
     @UseGuards(JwtAuthGuard)
-    logout(@Param('id') id: number): Promise<void> {
-        return this.authService.logout(id);
+    logout(@Body() userDto: {user: ResponseUserDto}): Promise<void> {
+        return this.authService.logout(userDto.user);
     }
 }

@@ -29,7 +29,8 @@ export class RolesAuthGuard implements CanActivate {
                 throw new HttpException('Нет доступа', HttpStatus.FORBIDDEN);
             }
             const user = this.tokenService.validateAccessToken(token);
-            return user.roles.some(role => requiredRoles.include(role.value));
+            req.user = {...user};
+            return user.roles.some(role => requiredRoles.includes(role.value));
         } catch (e) {
             throw new HttpException('Нет доступа', HttpStatus.FORBIDDEN);
         }

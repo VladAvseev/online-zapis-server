@@ -8,6 +8,7 @@ import {CityModel} from "../city/model/city.model";
 import {RoleModel} from "../role/model/role.model";
 import {UserModel} from "./model/user.model";
 import {CityModule} from "../city/city.module";
+import {TokenModule} from "../token/token.module";
 
 @Module({
     controllers: [UserController],
@@ -15,6 +16,7 @@ import {CityModule} from "../city/city.module";
     imports: [
         SequelizeModule.forFeature([UserModel, RoleModel, UserRoleModel, CityModel]),
         RoleModule,
+        TokenModule,
         forwardRef(() => CityModule),
     ],
     exports: [UserService],

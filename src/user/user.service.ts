@@ -7,6 +7,7 @@ import {RoleModel} from "../role/model/role.model";
 import {CityModel} from "../city/model/city.model";
 import {CityService} from "../city/city.service";
 import {ResponseUserDto} from "./dto/response-user.dto";
+import {AddRoleDto} from "./dto/add-role.dto";
 
 @Injectable()
 export class UserService {
@@ -66,5 +67,19 @@ export class UserService {
             }
         });
         return user;
+    }
+
+    async addRole(dto: AddRoleDto) {
+        const user = await this.userRepository.findByPk(dto.userId, {include: {all: true}});
+        const role = await this.roleService.getByValue(dto.value);
+        if (!user || !role) {
+            throw new HttpException('Роль или Пользователь не существуют', HttpStatus.BAD_REQUEST);
+        }
+        const userRoles: string[] = user.roles.map(role => {return role.value}) || [];
+         if (userRoles.includes(dto.value)) {
+            throw new HttpException('Выбранный пользователь уже имеет эту роль', HttpStatus.BAD_REQUEST)
+        }
+        await user.$add('role', role.id);
+        return dto;
     }
 }
