@@ -17,7 +17,7 @@ import {TokenModule} from "../token/token.module";
         SequelizeModule.forFeature([UserModel, RoleModel, UserRoleModel, CityModel]),
         RoleModule,
         TokenModule,
-        forwardRef(() => CityModule),
+        CityModule,
     ],
     exports: [UserService],
 })

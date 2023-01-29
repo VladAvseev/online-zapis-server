@@ -1,8 +1,8 @@
 import {Body, Controller, Get, Param, Post, UseGuards} from '@nestjs/common';
 import {UserService} from "./user.service";
 import {ResponseUserDto} from "./dto/response-user.dto";
-import {Roles} from "../auth/roles-auth.decorator";
-import {RolesAuthGuard} from "../auth/guards/roles-auth.guard";
+import {Roles} from "../auth/decorator/roles-auth.decorator";
+import {RolesAuthGuard} from "../auth/guard/roles-auth.guard";
 import {AddRoleDto} from "./dto/add-role.dto";
 
 

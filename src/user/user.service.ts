@@ -16,20 +16,19 @@ export class UserService {
                 private cityService: CityService,) {}
 
     async create(userDto: CreateUserDto): Promise<ResponseUserDto> {
-        try {
-            console.log(userDto)
-            const user: UserModel = await this.userRepository.create(userDto);
-            console.log(user);
-            const role: RoleModel = await this.roleService.getByValue("CLIENT");
-            const city: CityModel = await this.cityService.getById(userDto.city_id);
-            await user.$set('roles', [role.id]);
-            await user.$set('city', city);
-            user.city = city;
-            user.roles = [role];
-            return ResponseUserDto.toResponseUserDto(user);
-        } catch (e) {
-            console.log(e);
-        }
+        const user: UserModel = await this.userRepository.create(userDto);
+        const role: RoleModel = await this.roleService.getByValue("CLIENT");
+        const city: CityModel = await this.cityService.getById(userDto.city_id);
+
+        // set to database
+        await user.$set('roles', [role.id]);
+        await user.$set('city', city);
+
+        // set to model
+        user.city = city;
+        user.roles = [role];
+
+        return ResponseUserDto.toResponseUserDto(user);
     }
 
     async getAll(): Promise<ResponseUserDto[]> {
@@ -39,9 +38,11 @@ export class UserService {
 
     async getById(id: number): Promise<ResponseUserDto> {
         const user: UserModel = await this.userRepository.findByPk(id, {include: {all: true}});
+
         if (!user) {
             throw new HttpException('Пользователь с таким id не найден', HttpStatus.BAD_REQUEST);
         }
+
         return ResponseUserDto.toResponseUserDto(user);
     }
 
@@ -69,17 +70,22 @@ export class UserService {
         return user;
     }
 
-    async addRole(dto: AddRoleDto) {
+    async addRole(dto: AddRoleDto): Promise<ResponseUserDto> {
         const user = await this.userRepository.findByPk(dto.userId, {include: {all: true}});
         const role = await this.roleService.getByValue(dto.value);
+
         if (!user || !role) {
             throw new HttpException('Роль или Пользователь не существуют', HttpStatus.BAD_REQUEST);
         }
+
         const userRoles: string[] = user.roles.map(role => {return role.value}) || [];
          if (userRoles.includes(dto.value)) {
             throw new HttpException('Выбранный пользователь уже имеет эту роль', HttpStatus.BAD_REQUEST)
         }
+
         await user.$add('role', role.id);
-        return dto;
+        user.roles.push(role);
+
+        return user;
     }
 }

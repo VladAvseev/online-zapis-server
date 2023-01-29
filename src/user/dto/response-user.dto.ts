@@ -8,14 +8,12 @@ interface ResponseUserRole {
 }
 
 export class ResponseUserDto {
-    id: number;
-    name: string;
-    email: string;
-    phone: string;
-    city: CityModel;
-    roles: ResponseUserRole[];
-    accessToken: string;
-    refreshToken: string;
+    readonly id: number;
+    readonly name: string;
+    readonly email: string;
+    readonly phone: string;
+    readonly city: CityModel;
+    readonly roles: ResponseUserRole[];
 
     constructor(id: number, name: string, email: string, phone: string, city: CityModel, roles: RoleModel[]) {
         this.id = id;

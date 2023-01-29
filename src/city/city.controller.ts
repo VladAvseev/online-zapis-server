@@ -2,8 +2,8 @@ import {Body, Controller, Get, Param, Post, UseGuards} from '@nestjs/common';
 import {CityModel} from "./model/city.model";
 import {CityService} from "./city.service";
 import {CreateCityDto} from "./dto/create-city.dto";
-import {Roles} from "../auth/roles-auth.decorator";
-import {RolesAuthGuard} from "../auth/guards/roles-auth.guard";
+import {Roles} from "../auth/decorator/roles-auth.decorator";
+import {RolesAuthGuard} from "../auth/guard/roles-auth.guard";
 
 @Controller('city')
 export class CityController {

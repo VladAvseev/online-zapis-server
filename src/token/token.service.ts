@@ -1,6 +1,6 @@
 import {Injectable, UnauthorizedException} from '@nestjs/common';
 import {ResponseUserDto} from "../user/dto/response-user.dto";
-import {TokenDto} from "./dto/token.dto";
+import {TokensDto} from "./dto/token.dto";
 import {JwtService} from "@nestjs/jwt";
 import {SaveTokenDto} from "./dto/save-token.dto";
 import {InjectModel} from "@nestjs/sequelize";
@@ -14,7 +14,7 @@ export class TokenService {
                 private jwtService: JwtService,
                 private userService: UserService) {}
 
-    generateTokens(user: ResponseUserDto): TokenDto {
+    generateTokens(user: ResponseUserDto): TokensDto {
         return {
             accessToken: this.jwtService.sign({...user}, {expiresIn: '15m', secret: process.env.JWT_ACCESS_SECRET}),
             refreshToken: this.jwtService.sign({...user}, {expiresIn: '72h', secret: process.env.JWT_REFRESH_SECRET})
@@ -27,10 +27,12 @@ export class TokenService {
                 user_id: tokenDto.user_id
             }
         });
+
         if (tokenData) {
             await tokenData.set('refresh_token', tokenDto.refresh_token);
             return tokenData;
         }
+
         const token: TokenModel = await this.tokenRepository.create(tokenDto);
         return token;
     }
@@ -49,17 +51,21 @@ export class TokenService {
         return userData;
     }
 
-    async refresh(refreshToken: string): Promise<TokenDto> {
+    async refresh(refreshToken: string): Promise<TokensDto> {
         if (!refreshToken) {
             throw new UnauthorizedException();
         }
+
+        //check current token
         const userData = this.validateRefreshToken(refreshToken);
         const tokenFromDb = await this.tokenRepository.findOne({where: {refresh_token: refreshToken}});
         if (!userData || !tokenFromDb) {
             throw new UnauthorizedException();
         }
+
+        //create new tokens with last data
         const user: ResponseUserDto  = await this.userService.getById(userData.id);
-        const tokens: TokenDto = this.generateTokens(user);
+        const tokens: TokensDto = this.generateTokens(user);
         await this.saveToken({user_id: user.id, refresh_token: tokens.refreshToken});
         return tokens;
     }
