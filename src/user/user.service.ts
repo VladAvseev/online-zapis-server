@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {HttpCode, HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {InjectModel} from "@nestjs/sequelize";
 import {UserModel} from "./model/user.model";
 import {RoleService} from "../role/role.service";
@@ -9,6 +9,8 @@ import {CityService} from "../city/city.service";
 import {ResponseUserDto} from "./dto/response-user.dto";
 import {AddRoleDto} from "./dto/add-role.dto";
 import {UpdateUserDto} from "./dto/update-user.dto";
+import {UpdatePasswordDto} from "./dto/update-password.dto";
+import * as bcrypt from "bcryptjs";
 
 @Injectable()
 export class UserService {
@@ -123,5 +125,17 @@ export class UserService {
         user.roles.push(role);
 
         return user;
+    }
+
+    async updatePassword(id, dto: UpdatePasswordDto): Promise<void> {
+        const user: UserModel = await this.getById(id);
+
+        const passwordEquals = await bcrypt.compare(dto.oldPassword, user.password);
+        if (!passwordEquals) {
+            throw new HttpException({message: 'Неверный пароль'}, HttpStatus.BAD_REQUEST)
+        }
+
+        const newHashPassword = await bcrypt.hash(dto.newPassword, 5);
+        await this.userRepository.update({password: newHashPassword}, {where: {id}});
     }
 }

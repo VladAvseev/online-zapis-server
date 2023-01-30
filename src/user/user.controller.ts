@@ -6,6 +6,7 @@ import {RolesAuthGuard} from "../auth/guard/roles-auth.guard";
 import {AddRoleDto} from "./dto/add-role.dto";
 import {UpdateUserDto} from "./dto/update-user.dto";
 import {JwtAuthGuard} from "../auth/guard/jwt-auth.guard";
+import {UpdatePasswordDto} from "./dto/update-password.dto";
 
 
 @Controller('user')
@@ -26,6 +27,12 @@ export class UserController {
     @UseGuards(JwtAuthGuard)
     updateUser(@Param('id') id: number, @Body() userDto: UpdateUserDto): Promise<ResponseUserDto> {
         return this.userService.update(id, userDto);
+    }
+
+    @Put('/password/:id')
+    @UseGuards(JwtAuthGuard)
+    updatePassword(@Param('id') id: number, @Body() dto: UpdatePasswordDto): Promise<void> {
+        return this.userService.updatePassword(id, dto);
     }
 
     @Post('/role')
