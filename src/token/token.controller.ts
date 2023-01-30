@@ -1,5 +1,5 @@
 import {Body, Controller, Post} from '@nestjs/common';
-import {TokenDto} from "./dto/token.dto";
+import {TokensDto} from "./dto/token.dto";
 import {TokenService} from "./token.service";
 import {RefreshTokenDto} from "./dto/refresh-token.dto";
 
@@ -9,7 +9,7 @@ export class TokenController {
     constructor(private tokenService: TokenService) {}
 
     @Post('/refresh')
-    refresh(@Body() body: RefreshTokenDto): Promise<TokenDto> {
+    refresh(@Body() body: RefreshTokenDto): Promise<TokensDto> {
             return this.tokenService.refresh(body.refreshToken);
     }
 }

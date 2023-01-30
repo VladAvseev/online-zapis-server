@@ -8,6 +8,7 @@ import {CityModel} from "../city/model/city.model";
 import {CityService} from "../city/city.service";
 import {ResponseUserDto} from "./dto/response-user.dto";
 import {AddRoleDto} from "./dto/add-role.dto";
+import {UpdateUserDto} from "./dto/update-user.dto";
 
 @Injectable()
 export class UserService {
@@ -36,14 +37,14 @@ export class UserService {
         return users.map(user => ResponseUserDto.toResponseUserDto(user));
     }
 
-    async getById(id: number): Promise<ResponseUserDto> {
+    async getById(id: number): Promise<UserModel> {
         const user: UserModel = await this.userRepository.findByPk(id, {include: {all: true}});
 
         if (!user) {
             throw new HttpException('Пользователь с таким id не найден', HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseUserDto.toResponseUserDto(user);
+        return user;
     }
 
     async getByEmail(email: string): Promise<UserModel> {
@@ -55,6 +56,11 @@ export class UserService {
                 all: true
             }
         });
+
+        if (!user) {
+            throw new HttpException('Пользователь с такой почтой не найден', HttpStatus.BAD_REQUEST);
+        }
+
         return user;
     }
 
@@ -67,11 +73,41 @@ export class UserService {
                 all: true
             }
         });
+
+        if (!user) {
+            throw new HttpException('Пользователь с таким телефоном не найден', HttpStatus.BAD_REQUEST);
+        }
+
         return user;
     }
 
+    async update(id: number, dto: UpdateUserDto): Promise<ResponseUserDto> {
+        const candidate: UserModel = await this.getById(id);
+
+        if (dto.email !== candidate.email) {
+            const candidate = await this.getByEmail(dto.email);
+            if (candidate) {
+                throw new HttpException({massage: "Пользователь с такой почтой уже существует"}, HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        if (dto.phone !== candidate.phone) {
+            const candidate = await this.getByEmail(dto.email);
+            if (candidate) {
+                throw new HttpException({massage: "Пользователь с таким телефоном уже существует"}, HttpStatus.BAD_REQUEST);
+            }
+        }
+
+        await this.cityService.getById(dto.city_id);
+
+        await this.userRepository.update(dto, {where: {id}});
+        const user: UserModel = await this.getById(id);
+
+        return ResponseUserDto.toResponseUserDto(user);
+    }
+
     async addRole(dto: AddRoleDto): Promise<ResponseUserDto> {
-        const user = await this.userRepository.findByPk(dto.userId, {include: {all: true}});
+        const user = await this.getById(dto.userId);
         const role = await this.roleService.getByValue(dto.value);
 
         if (!user || !role) {

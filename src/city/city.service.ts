@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {InjectModel} from "@nestjs/sequelize";
 import {CityModel} from "./model/city.model";
 import {CreateCityDto} from "./dto/create-city.dto";
@@ -15,6 +15,11 @@ export class CityService {
 
     async getById(id: number): Promise<CityModel> {
         const city: CityModel = await this.cityRepository.findByPk(id);
+
+        if (!city) {
+            throw new HttpException({message: "Город не найден"}, HttpStatus.BAD_REQUEST);
+        }
+
         return city;
     }
 

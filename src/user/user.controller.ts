@@ -1,9 +1,11 @@
-import {Body, Controller, Get, Param, Post, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Put, UseGuards} from '@nestjs/common';
 import {UserService} from "./user.service";
 import {ResponseUserDto} from "./dto/response-user.dto";
 import {Roles} from "../auth/decorator/roles-auth.decorator";
 import {RolesAuthGuard} from "../auth/guard/roles-auth.guard";
 import {AddRoleDto} from "./dto/add-role.dto";
+import {UpdateUserDto} from "./dto/update-user.dto";
+import {JwtAuthGuard} from "../auth/guard/jwt-auth.guard";
 
 
 @Controller('user')
@@ -18,6 +20,12 @@ export class UserController {
     @Get(':id')
     getUserById(@Param('id') id: number): Promise<ResponseUserDto> {
         return this.userService.getById(id);
+    }
+
+    @Put(':id')
+    @UseGuards(JwtAuthGuard)
+    updateUser(@Param('id') id: number, @Body() userDto: UpdateUserDto): Promise<ResponseUserDto> {
+        return this.userService.update(id, userDto);
     }
 
     @Post('/role')
