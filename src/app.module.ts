@@ -11,6 +11,8 @@ import {UserRoleModel} from "./role/model/user-role.model";
 import { AuthModule } from './auth/auth.module';
 import { TokenModule } from './token/token.module';
 import {TokenModel} from "./token/model/token.model";
+import { TeamModule } from './team/team.module';
+import { TagModule } from './tag/tag.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import {TokenModel} from "./token/model/token.model";
       CityModule,
       AuthModule,
       TokenModule,
+      TeamModule,
+      TagModule,
   ],
 })
 export class AppModule {}

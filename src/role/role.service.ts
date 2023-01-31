@@ -21,8 +21,8 @@ export class RoleService {
         return role;
     }
 
-    async create(cityDto: CreateRoleDto): Promise<RoleModel> {
-        const role: RoleModel = await this.roleRepository.create(cityDto);
+    async create(roleDto: CreateRoleDto): Promise<RoleModel> {
+        const role: RoleModel = await this.roleRepository.create(roleDto);
         return role;
     }
 }
