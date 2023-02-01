@@ -5,12 +5,13 @@ import {SequelizeModule} from "@nestjs/sequelize";
 import {CityModel} from "./model/city.model";
 import {UserModel} from "../user/model/user.model";
 import {TokenModule} from "../token/token.module";
+import {TeamModel} from "../team/model/team.model";
 
 @Module({
     controllers: [CityController],
     providers: [CityService],
     imports: [
-        SequelizeModule.forFeature([CityModel, UserModel]),
+        SequelizeModule.forFeature([CityModel, UserModel, TeamModel]),
         TokenModule
     ],
     exports: [CityService],

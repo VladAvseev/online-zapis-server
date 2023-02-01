@@ -1,4 +1,5 @@
 export class CreateTeamDto {
+    readonly admin_id: number;
     readonly title: string;
     readonly phone: string;
     readonly email: string;

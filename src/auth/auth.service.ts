@@ -25,7 +25,10 @@ export class AuthService {
     }
 
     async registration(userDto: CreateUserDto): Promise<ResponseUserTokensDto> {
-        let candidate = await this.userService.getByEmail(userDto.email);
+        let candidate;
+        try {
+            candidate = await this.userService.getByEmail(userDto.email);
+        } catch (e) {}
 
         if (!userDto.name || !userDto.email || !userDto.phone || !userDto.city_id || !userDto.password) {
             throw new HttpException({message: 'Не все поля заполнены'}, HttpStatus.BAD_REQUEST);
@@ -35,7 +38,10 @@ export class AuthService {
             throw new HttpException({message: 'Пользователь с таким email уже существует'}, HttpStatus.BAD_REQUEST);
         }
 
-        candidate = await this.userService.getByPhone(userDto.email);
+        try {
+            candidate = await this.userService.getByPhone(userDto.email);
+        } catch (e) {}
+
         if (candidate) {
             throw new HttpException({message: 'Пользователь с таким номером телефона уже существует'}, HttpStatus.BAD_REQUEST);
         }

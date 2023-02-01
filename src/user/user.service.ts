@@ -100,8 +100,6 @@ export class UserService {
             }
         }
 
-        await this.cityService.getById(dto.city_id);
-
         await this.userRepository.update(dto, {where: {id}});
         const user: UserModel = await this.getById(id);
 

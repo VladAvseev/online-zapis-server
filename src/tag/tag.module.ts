@@ -13,6 +13,7 @@ import {TeamTagModel} from "./model/team-tag.model";
   imports: [
     SequelizeModule.forFeature([TagModel, TeamModel, TeamTagModel]),
     TokenModule,
-  ]
+  ],
+  exports: [TagService]
 })
 export class TagModule {}

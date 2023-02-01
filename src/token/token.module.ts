@@ -10,9 +10,9 @@ import {UserModule} from "../user/user.module";
   controllers: [TokenController],
   providers: [TokenService],
   imports: [
+      SequelizeModule.forFeature([TokenModel]),
       JwtModule,
       forwardRef(() => UserModule),
-      SequelizeModule.forFeature([TokenModel]),
   ],
   exports: [TokenService],
 })

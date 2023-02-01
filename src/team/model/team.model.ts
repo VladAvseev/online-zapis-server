@@ -1,8 +1,18 @@
-import {BelongsTo, BelongsToMany, Column, DataType, ForeignKey, HasOne, Model, Table} from "sequelize-typescript";
-import {RoleModel} from "../../role/model/role.model";
-import {UserRoleModel} from "../../role/model/user-role.model";
+import {
+    BelongsTo,
+    BelongsToMany,
+    Column,
+    DataType,
+    ForeignKey,
+    HasMany,
+    Model,
+    Table
+} from "sequelize-typescript";
 import {CityModel} from "../../city/model/city.model";
-import {TokenModel} from "../../token/model/token.model";
+import {TagModel} from "../../tag/model/tag.model";
+import {TeamTagModel} from "../../tag/model/team-tag.model";
+import {UserModel} from "../../user/model/user.model";
+import {ServiceModel} from "../../service/model/service.model";
 
 interface TeamCreationAttrs {
     admin_id: number;
@@ -18,30 +28,34 @@ export class TeamModel extends Model<TeamModel, TeamCreationAttrs> {
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
 
-
+    @Column({type: DataType.STRING, allowNull: false})
+    title: string;
 
     @Column({type: DataType.STRING, allowNull: false})
-    name: string;
-
-    @Column({type: DataType.STRING, allowNull: false, unique: true})
     email: string;
 
-    @Column({type: DataType.STRING, allowNull: false, unique: true})
+    @Column({type: DataType.STRING, allowNull: false})
     phone: string;
 
-    @Column({type: DataType.STRING, allowNull: false})
-    password: string;
+    @Column({type: DataType.INTEGER, allowNull: false})
+    admin_id: number;
 
+    // TEAM MANY-TO-ONE CITY
     @ForeignKey(() => CityModel)
     @Column({type: DataType.INTEGER, allowNull: false})
     city_id: number;
-
     @BelongsTo(() => CityModel)
     city: CityModel;
 
-    @BelongsToMany(() => RoleModel, () => UserRoleModel)
-    roles: RoleModel[];
+    // TEAM ONE-TO-MANY TEAM-TAG
+    @BelongsToMany(() => TagModel, () => TeamTagModel)
+    tags: TagModel[];
 
-    @HasOne(() => TokenModel)
-    token: TokenModel;
+    // TEAM ONE-TO-MANY USER
+    @HasMany(() => UserModel)
+    users: UserModel[];
+
+    // TEAM ONE-TO-MANY SERVICE
+    @HasMany(() => ServiceModel)
+    services: ServiceModel[];
 }

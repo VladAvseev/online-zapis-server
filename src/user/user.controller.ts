@@ -1,8 +1,6 @@
 import {Body, Controller, Get, Param, Post, Put, UseGuards} from '@nestjs/common';
 import {UserService} from "./user.service";
 import {ResponseUserDto} from "./dto/response-user.dto";
-import {Roles} from "../auth/decorator/roles-auth.decorator";
-import {RolesAuthGuard} from "../auth/guard/roles-auth.guard";
 import {AddRoleDto} from "./dto/add-role.dto";
 import {UpdateUserDto} from "./dto/update-user.dto";
 import {JwtAuthGuard} from "../auth/guard/jwt-auth.guard";
@@ -36,8 +34,6 @@ export class UserController {
     }
 
     @Post('/role')
-    @Roles("ADMIN")
-    @UseGuards(RolesAuthGuard)
     addRole(@Body() addRoleDto: AddRoleDto) {
         return this.userService.addRole(addRoleDto);
     }

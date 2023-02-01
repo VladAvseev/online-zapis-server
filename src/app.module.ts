@@ -13,6 +13,16 @@ import { TokenModule } from './token/token.module';
 import {TokenModel} from "./token/model/token.model";
 import { TeamModule } from './team/team.module';
 import { TagModule } from './tag/tag.module';
+import {TeamModel} from "./team/model/team.model";
+import {TagModel} from "./tag/model/tag.model";
+import {TeamTagModel} from "./tag/model/team-tag.model";
+import { MasterModule } from './master/master.module';
+import { ServiceModule } from './service/service.module';
+import { TicketModule } from './ticket/ticket.module';
+import {MasterModel} from "./master/model/master.model";
+import {ServiceModel} from "./service/model/service.model";
+import {MasterServiceModel} from "./service/model/master-service.model";
+import {TicketModel} from "./ticket/model/ticket.model";
 
 @Module({
   imports: [
@@ -27,7 +37,20 @@ import { TagModule } from './tag/tag.module';
           username: process.env.POSTGRES_USERNAME,
           password: process.env.POSTGRES_PASSWORD,
           database: process.env.POSTGRES_DATABASE,
-          models: [UserModel, CityModel, RoleModel, UserRoleModel, TokenModel],
+          models: [
+              UserModel,
+              CityModel,
+              RoleModel,
+              UserRoleModel,
+              TokenModel,
+              TeamModel,
+              TagModel,
+              TeamTagModel,
+              MasterModel,
+              ServiceModel,
+              MasterServiceModel,
+              TicketModel,
+          ],
           autoLoadModels: true,
       }),
       UserModule,
@@ -37,6 +60,9 @@ import { TagModule } from './tag/tag.module';
       TokenModule,
       TeamModule,
       TagModule,
+      MasterModule,
+      ServiceModule,
+      TicketModule,
   ],
 })
 export class AppModule {}

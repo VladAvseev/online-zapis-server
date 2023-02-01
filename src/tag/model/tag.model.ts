@@ -7,7 +7,7 @@ interface TagCreationAttrs {
     value: string;
 }
 
-@Table({tableName: 'role', createdAt: false, updatedAt: false})
+@Table({tableName: 'tag', createdAt: false, updatedAt: false})
 export class TagModel extends Model<TagModel, TagCreationAttrs> {
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
@@ -15,6 +15,7 @@ export class TagModel extends Model<TagModel, TagCreationAttrs> {
     @Column({type: DataType.STRING, unique: true, allowNull: false})
     value: string;
 
+    // TAG ONE-TO-MANY TEAM-TAG
     @BelongsToMany(() => TeamModel, () => TeamTagModel)
     teams: TeamModel[];
 }
