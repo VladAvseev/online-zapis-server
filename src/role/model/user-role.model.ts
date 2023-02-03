@@ -9,11 +9,11 @@ export class UserRoleModel extends Model<UserRoleModel> {
 
     // USER-ROLE MANY-TO-ONE ROLE
     @ForeignKey(() => RoleModel)
-    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'cascade'})
+    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'CASCADE'})
     role_id: number;
 
     // USER-ROLE MANY-TO-ONE USER
     @ForeignKey(() => UserModel)
-    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'cascade'})
+    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'CASCADE'})
     user_id: number;
 }

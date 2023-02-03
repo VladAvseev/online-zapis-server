@@ -9,14 +9,14 @@ export class MasterServiceModel extends Model<MasterServiceModel> {
 
     // MASTER-SERVICE MANY-TO-ONE MASTER
     @ForeignKey(() => MasterModel)
-    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'cascade'})
+    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'CASCADE'})
     master_id: number;
     @BelongsTo(() => MasterModel)
     master: MasterModel;
 
     // MASTER-SERVICE MANY-TO-ONE SERVICE
     @ForeignKey(() => ServiceModel)
-    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'cascade'})
+    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'CASCADE'})
     service_id: number;
     @BelongsTo(() => ServiceModel)
     service: ServiceModel;

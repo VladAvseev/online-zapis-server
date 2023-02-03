@@ -12,12 +12,13 @@ import {TokenModule} from "../token/token.module";
 import {TeamModel} from "../team/model/team.model";
 import {MasterModel} from "../master/model/master.model";
 import {TicketModel} from "../ticket/model/ticket.model";
+import {UserTeamModel} from "../team/model/user-team.model";
 
 @Module({
     controllers: [UserController],
     providers: [UserService],
     imports: [
-        SequelizeModule.forFeature([UserModel, RoleModel, UserRoleModel, CityModel, TeamModel, MasterModel, TicketModel]),
+        SequelizeModule.forFeature([UserModel, RoleModel, UserRoleModel, CityModel, TeamModel, MasterModel, TicketModel, UserTeamModel]),
         RoleModule,
         TokenModule,
         CityModule,

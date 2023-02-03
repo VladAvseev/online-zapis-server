@@ -11,12 +11,13 @@ import {TeamTagModel} from "../tag/model/team-tag.model";
 import {TokenModule} from "../token/token.module";
 import {TagModule} from "../tag/tag.module";
 import {UserModule} from "../user/user.module";
+import {UserTeamModel} from "./model/user-team.model";
 
 @Module({
   controllers: [TeamController],
   providers: [TeamService],
   imports: [
-      SequelizeModule.forFeature([TeamModel, TagModel, TeamTagModel, UserModel, CityModel, ServiceModel]),
+      SequelizeModule.forFeature([TeamModel, TagModel, TeamTagModel, UserModel, CityModel, ServiceModel, UserTeamModel]),
       TokenModule,
       TagModule,
       UserModule,

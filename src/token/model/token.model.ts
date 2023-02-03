@@ -12,6 +12,6 @@ export class TokenModel extends Model<TokenModel, SaveTokenDto>{
 
     // TOKEN ONE-TO-ONE USER
     @ForeignKey(() => UserModel)
-    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'cascade'})
+    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'CASCADE'})
     user_id: string;
 }

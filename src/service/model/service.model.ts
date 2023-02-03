@@ -19,6 +19,6 @@ export class ServiceModel extends Model<ServiceModel, ServiceCreationAttrs> {
 
     // SERVICE MANY-TO-ONE TEAM
     @ForeignKey(() => TeamModel)
-    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'cascade'})
+    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'CASCADE'})
     team_id: number;
 }

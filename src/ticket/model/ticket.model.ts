@@ -23,14 +23,14 @@ export class TicketModel extends Model<TicketModel, TicketCreationAttrs> {
 
     // TICKET ONE-TO-MANY MASTER-SERVICE
     @ForeignKey(() => MasterServiceModel)
-    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'cascade'})
+    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'CASCADE'})
     service_id: number;
     @BelongsTo(() => MasterServiceModel)
     service: MasterServiceModel;
 
     // TICKET MANY-TO-ONE USER
     @ForeignKey(() => UserModel)
-    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'cascade'})
+    @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'CASCADE'})
     user_id: number;
     @BelongsTo(() => UserModel)
     user: UserModel;

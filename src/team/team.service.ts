@@ -54,7 +54,6 @@ export class TeamService {
         await this.teamRepository.update(dto.team, {where: {id}})
 
         const tags: TagModel[] = await this.tagService.addTags(dto.tags);
-        console.log(tags);
         const team: TeamModel = await this.getById(id);
         await team.$set('tags', tags);
         team.tags = tags;

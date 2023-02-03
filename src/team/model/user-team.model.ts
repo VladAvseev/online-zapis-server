@@ -1,18 +1,18 @@
 import {Column, DataType, ForeignKey, Model, Table} from "sequelize-typescript";
-import {TagModel} from "./tag.model";
-import {TeamModel} from "../../team/model/team.model";
+import {UserModel} from "../../user/model/user.model";
+import {TeamModel} from "./team.model";
 
-@Table({tableName: 'team_tag', createdAt: false, updatedAt: false})
-export class TeamTagModel extends Model<TeamTagModel> {
+@Table({tableName: 'user_team', createdAt: false, updatedAt: false})
+export class UserTeamModel extends Model<UserTeamModel> {
     @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true})
     id: number;
 
-    // TEAM-TAG MANY-TO-ONE TAG
-    @ForeignKey(() => TagModel)
+    // USER-ROLE MANY-TO-ONE ROLE
+    @ForeignKey(() => UserModel)
     @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'CASCADE'})
-    tag_id: number;
+    user_id: number;
 
-    // TEAM-TAG MANY-TO-ONE TEAM
+    // USER-ROLE MANY-TO-ONE USER
     @ForeignKey(() => TeamModel)
     @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'CASCADE'})
     team_id: number;

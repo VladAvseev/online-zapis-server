@@ -13,7 +13,7 @@ interface MasterCreationAttrs {
 export class MasterModel extends Model<MasterModel, MasterCreationAttrs> {
     // MASTER ONE-TO-ONE USER
     @ForeignKey(() => UserModel)
-    @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true, onDelete: 'cascade'})
+    @Column({type: DataType.INTEGER, unique: true, autoIncrement: true, primaryKey: true, onDelete: 'CASCADE'})
     id: number;
 
     @Column({type: DataType.STRING})
@@ -22,8 +22,8 @@ export class MasterModel extends Model<MasterModel, MasterCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     position: string;
 
-    @Column({type: DataType.ARRAY(DataType.ARRAY(DataType.TIME)), allowNull: false})
-    schedule: Date[][]
+    @Column({type: DataType.ARRAY(DataType.ARRAY(DataType.TIME)), defaultValue: [[],[],[],[],[],[],[]]})
+    schedule: Date[][];
 
     // MASTER ONE-TO-MANY MASTER-SERVICE
     @BelongsToMany(() => ServiceModel, () => MasterServiceModel)

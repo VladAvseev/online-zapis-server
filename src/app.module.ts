@@ -23,6 +23,7 @@ import {MasterModel} from "./master/model/master.model";
 import {ServiceModel} from "./service/model/service.model";
 import {MasterServiceModel} from "./service/model/master-service.model";
 import {TicketModel} from "./ticket/model/ticket.model";
+import {UserTeamModel} from "./team/model/user-team.model";
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import {TicketModel} from "./ticket/model/ticket.model";
               ServiceModel,
               MasterServiceModel,
               TicketModel,
+              UserTeamModel
           ],
           autoLoadModels: true,
       }),

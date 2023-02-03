@@ -13,6 +13,7 @@ import {TagModel} from "../../tag/model/tag.model";
 import {TeamTagModel} from "../../tag/model/team-tag.model";
 import {UserModel} from "../../user/model/user.model";
 import {ServiceModel} from "../../service/model/service.model";
+import {UserTeamModel} from "./user-team.model";
 
 interface TeamCreationAttrs {
     admin_id: number;
@@ -40,9 +41,12 @@ export class TeamModel extends Model<TeamModel, TeamCreationAttrs> {
     @Column({type: DataType.INTEGER, allowNull: false})
     admin_id: number;
 
+    @Column({type: DataType.TEXT})
+    description: string;
+
     // TEAM MANY-TO-ONE CITY
     @ForeignKey(() => CityModel)
-    @Column({type: DataType.INTEGER, allowNull: false})
+    @Column({type: DataType.INTEGER, allowNull: true, onDelete: 'SET NULL'})
     city_id: number;
     @BelongsTo(() => CityModel)
     city: CityModel;
@@ -58,4 +62,8 @@ export class TeamModel extends Model<TeamModel, TeamCreationAttrs> {
     // TEAM ONE-TO-MANY SERVICE
     @HasMany(() => ServiceModel)
     services: ServiceModel[];
+
+    // TEAM ONE-TO-MANY USER-TEAM
+    @BelongsToMany(() => UserModel, () => UserTeamModel)
+    saves: UserModel[];
 }

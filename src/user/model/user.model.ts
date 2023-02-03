@@ -16,6 +16,7 @@ import {TokenModel} from "../../token/model/token.model";
 import {TeamModel} from "../../team/model/team.model";
 import {MasterModel} from "../../master/model/master.model";
 import {TicketModel} from "../../ticket/model/ticket.model";
+import {UserTeamModel} from "../../team/model/user-team.model";
 
 interface UserCreationAttrs {
     name: string;
@@ -59,7 +60,7 @@ export class UserModel extends Model<UserModel, UserCreationAttrs> {
 
     // USER MANY-TO-ONE TEAM
     @ForeignKey(() => TeamModel)
-    @Column({type: DataType.INTEGER, allowNull: true, onDelete: 'no action'})
+    @Column({type: DataType.INTEGER, allowNull: true, onDelete: 'SET NULL'})
     team_id: number;
 
     // USER ONE-TO-ONE MASTER
@@ -69,4 +70,8 @@ export class UserModel extends Model<UserModel, UserCreationAttrs> {
     // USER ONE-TO-MANY TICKET
     @HasMany(() => TicketModel)
     tickets: TicketModel[];
+
+    // USER ONE-TO-MANY USER-TEAM
+    @BelongsToMany(() => TeamModel, () => UserTeamModel)
+    teams: TeamModel[];
 }
