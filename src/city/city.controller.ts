@@ -19,7 +19,7 @@ export class CityController {
     }
 
     @Post()
-    createCity(@Body() cityDto: CreateCityDto): Promise<CityModel> {
-        return this.cityService.create(cityDto);
+    createCity(@Body() dto: CreateCityDto): Promise<CityModel> {
+        return this.cityService.create(dto);
     }
 }

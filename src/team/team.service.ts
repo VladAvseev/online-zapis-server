@@ -7,28 +7,53 @@ import {TagService} from "../tag/tag.service";
 import {UserModel} from "../user/model/user.model";
 import {UserService} from "../user/user.service";
 import {UpdateTeamDto} from "./dto/update-team.dto";
+import {MasterModel} from "../master/model/master.model";
+import {MasterService} from "../master/master.service";
+import {ResponseTeamDto} from "./dto/response-team.dto";
 
 @Injectable()
 export class TeamService {
     constructor(@InjectModel(TeamModel) private teamRepository: typeof TeamModel,
                 private tagService: TagService,
-                private userService: UserService) {}
+                private userService: UserService,
+                private masterService: MasterService) {}
 
-    async getAll(): Promise<TeamModel[]> {
-        return this.teamRepository.findAll({include: {all: true}});
+    // GET: get all teams in current town
+    async getAll(dto: {cityId: number, search: string}): Promise<ResponseTeamDto[]> {
+        const teams: TeamModel[] = await this.teamRepository.findAll({include: {all: true}});
+        const filterTeams: TeamModel[] = teams.filter(team => {
+            if (team.city.id === dto.cityId) {
+                let isSearched = false;
+                team.tags.forEach(tag => {
+                    if (tag.value.toLowerCase().includes(dto.search.toLowerCase())) {
+                        isSearched = true;
+                    }
+                })
+                return isSearched;
+            }
+            return false;
+        })
+        return filterTeams.map(team => new ResponseTeamDto(team));
     }
 
-    async getById(id: number): Promise<TeamModel> {
+    // GET: get team by id
+    async getById(id: number): Promise<ResponseTeamDto> {
         const team: TeamModel = await this.teamRepository.findByPk(id, {include: {all: true}});
 
         if (!team) {
             throw new HttpException('Команда с таким id не найден', HttpStatus.BAD_REQUEST);
         }
 
-        return team;
+        return new ResponseTeamDto(team);
     }
 
-    async create(dto: CreateTeamDto): Promise<TeamModel> {
+    async create(dto: CreateTeamDto): Promise<{ message: string }> {
+        const admin: UserModel = await this.userService.getModelById(dto.admin_id);
+
+        if (admin.team_id) {
+            throw new HttpException({message: 'Вы уже состоите в команде'}, HttpStatus.BAD_REQUEST);
+        }
+
         if (!dto.title || !dto.email || !dto.city_id) {
             throw new HttpException({message: 'Не все обязательные поля заполнены'}, HttpStatus.BAD_REQUEST);
         }
@@ -38,14 +63,12 @@ export class TeamService {
         const tags: TagModel[] = await this.tagService.addTags(dto.tags);
         await team.$set('tags', tags);
 
-        const admin: UserModel = await this.userService.getModelById(dto.admin_id);
         await team.$set('users', [admin]);
 
-        //todo: create master model and set master to user model
+        const master: MasterModel = await this.masterService.create(dto.admin_id);
+        await admin.$set('master', master);
 
-        team.users = [admin];
-        team.tags = tags;
-        return team;
+        return {message: 'success'};
     }
 
     async update(id: number, dto: UpdateTeamDto): Promise<TeamModel> {
@@ -56,9 +79,19 @@ export class TeamService {
         await this.teamRepository.update(dto.team, {where: {id}})
 
         const tags: TagModel[] = await this.tagService.addTags(dto.tags);
-        const team: TeamModel = await this.getById(id);
+        const team: TeamModel = await this.getModelById(id);
         await team.$set('tags', tags);
         team.tags = tags;
+        return team;
+    }
+
+    async getModelById(id: number): Promise<TeamModel> {
+        const team: TeamModel = await this.teamRepository.findByPk(id, {include: {all: true}});
+
+        if (!team) {
+            throw new HttpException('Команда с таким id не найден', HttpStatus.BAD_REQUEST);
+        }
+
         return team;
     }
 }

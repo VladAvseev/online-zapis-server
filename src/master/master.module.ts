@@ -12,6 +12,7 @@ import {UserModel} from "../user/model/user.model";
   providers: [MasterService],
   imports: [
       SequelizeModule.forFeature([MasterModel, UserModel, ServiceModel, MasterServiceModel])
-  ]
+  ],
+    exports: [MasterService]
 })
 export class MasterModule {}

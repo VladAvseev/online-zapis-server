@@ -21,8 +21,8 @@ export class TagService {
         return tag;
     }
 
-    async create(tagDto: CreateTagDto): Promise<TagModel> {
-        const tag: TagModel = await this.tagRepository.create(tagDto);
+    async create(dto: CreateTagDto): Promise<TagModel> {
+        const tag: TagModel = await this.tagRepository.create(dto);
         return tag;
     }
 

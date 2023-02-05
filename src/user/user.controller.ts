@@ -37,6 +37,7 @@ export class UserController {
         return this.userService.addRole(addRoleDto);
     }
 
+    //todo add controller in future
     @Post('/team/:id')
     addTeam(@Param('id') teamId: number) {
 

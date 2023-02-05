@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {InjectModel} from "@nestjs/sequelize";
 import {RoleModel} from "./model/role.model";
 import {CreateRoleDto} from "./dto/create-role.dto";
@@ -18,11 +18,14 @@ export class RoleService {
                 value,
             },
         });
+        if (!role) {
+            throw new HttpException({message: 'Роль не найдена'}, HttpStatus.BAD_REQUEST);
+        }
         return role;
     }
 
-    async create(roleDto: CreateRoleDto): Promise<RoleModel> {
-        const role: RoleModel = await this.roleRepository.create(roleDto);
+    async create(dto: CreateRoleDto): Promise<RoleModel> {
+        const role: RoleModel = await this.roleRepository.create(dto);
         return role;
     }
 }

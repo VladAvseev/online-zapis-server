@@ -12,6 +12,7 @@ import {TokenModule} from "../token/token.module";
 import {TagModule} from "../tag/tag.module";
 import {UserModule} from "../user/user.module";
 import {UserTeamModel} from "./model/user-team.model";
+import {MasterModule} from "../master/master.module";
 
 @Module({
   controllers: [TeamController],
@@ -21,6 +22,7 @@ import {UserTeamModel} from "./model/user-team.model";
       TokenModule,
       TagModule,
       UserModule,
+      MasterModule,
   ]
 })
 export class TeamModule {}

@@ -1,6 +1,5 @@
 import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {LoginUserDto} from "./dto/login-user.dto";
-import {CreateUserDto} from "../user/dto/create-user.dto";
 import {UserService} from "../user/user.service";
 import * as bcrypt from "bcryptjs";
 import {ResponseUserDto} from "../user/dto/response-user.dto";
@@ -8,6 +7,7 @@ import {TokensDto} from "../token/dto/token.dto";
 import {TokenService} from "../token/token.service";
 import {ResponseUserTokensDto} from "./dto/response-user-tokens.dto";
 import {UserModel} from "../user/model/user.model";
+import {RegistrationUserDto} from "./dto/registration-user.dto";
 
 @Injectable()
 export class AuthService {
@@ -15,8 +15,8 @@ export class AuthService {
     constructor(private userService: UserService,
                 private tokenService: TokenService) {}
 
-    async login(userDto: LoginUserDto): Promise<ResponseUserTokensDto> {
-        const user: ResponseUserDto = await this.validateUser(userDto);
+    async login(dto: LoginUserDto): Promise<ResponseUserTokensDto> {
+        const user: ResponseUserDto = await this.validateUser(dto);
 
         const tokens: TokensDto = this.tokenService.generateTokens(user);
         await this.tokenService.saveToken({user_id: user.id, refresh_token: tokens.refreshToken});
@@ -24,13 +24,13 @@ export class AuthService {
         return new ResponseUserTokensDto(user, tokens);
     }
 
-    async registration(userDto: CreateUserDto): Promise<ResponseUserTokensDto> {
+    async registration(dto: RegistrationUserDto): Promise<ResponseUserTokensDto> {
         let candidate;
         try {
-            candidate = await this.userService.getByEmail(userDto.email);
+            candidate = await this.userService.getByEmail(dto.email);
         } catch (e) {}
 
-        if (!userDto.name || !userDto.email || !userDto.phone || !userDto.city_id || !userDto.password) {
+        if (!dto.name || !dto.email || !dto.phone || !dto.city_id || !dto.password) {
             throw new HttpException({message: 'Не все поля заполнены'}, HttpStatus.BAD_REQUEST);
         }
 
@@ -39,15 +39,15 @@ export class AuthService {
         }
 
         try {
-            candidate = await this.userService.getByPhone(userDto.email);
+            candidate = await this.userService.getByPhone(dto.email);
         } catch (e) {}
 
         if (candidate) {
             throw new HttpException({message: 'Пользователь с таким номером телефона уже существует'}, HttpStatus.BAD_REQUEST);
         }
 
-        const hashPassword = await bcrypt.hash(userDto.password, 5);
-        const user = await this.userService.create({...userDto, password: hashPassword});
+        const hashPassword = await bcrypt.hash(dto.password, 5);
+        const user = await this.userService.create({...dto, password: hashPassword});
 
         const tokens: TokensDto = this.tokenService.generateTokens(user);
         await this.tokenService.saveToken({user_id: user.id, refresh_token: tokens.refreshToken});
@@ -59,12 +59,12 @@ export class AuthService {
         await this.tokenService.remove(userDto.id);
     }
 
-    private async validateUser(userDto: LoginUserDto): Promise<ResponseUserDto> {
-        const user: UserModel = await this.userService.getByEmail(userDto.email);
+    private async validateUser(dto: LoginUserDto): Promise<ResponseUserDto> {
+        const user: UserModel = await this.userService.getByEmail(dto.email);
         if (!user) {
             throw new HttpException({message: 'Пользователь с таким email не найден'}, HttpStatus.BAD_REQUEST)
         }
-        const passwordEquals = await bcrypt.compare(userDto.password, user.password);
+        const passwordEquals = await bcrypt.compare(dto.password, user.password);
         if (passwordEquals) {
             return new ResponseUserDto(user);
         }

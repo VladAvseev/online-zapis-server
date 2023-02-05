@@ -18,7 +18,7 @@ export class RoleController {
     }
 
     @Post()
-    createRole(@Body() roleDto: CreateRoleDto): Promise<RoleModel> {
-        return this.roleService.create(roleDto);
+    createRole(@Body() dto: CreateRoleDto): Promise<RoleModel> {
+        return this.roleService.create(dto);
     }
 }

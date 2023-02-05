@@ -4,24 +4,25 @@ import {TeamModel} from "./model/team.model";
 import {CreateTeamDto} from "./dto/create-team.dto";
 import {JwtAuthGuard} from "../auth/guard/jwt-auth.guard";
 import {UpdateTeamDto} from "./dto/update-team.dto";
+import {ResponseTeamDto} from "./dto/response-team.dto";
 
 @Controller('team')
 export class TeamController {
     constructor(private teamService: TeamService) {}
 
     @Get()
-    getAllTeams(): Promise<TeamModel[]> {
-        return this.teamService.getAll();
+    getAllTeams(@Body() dto: {cityId: number, search: string}): Promise<ResponseTeamDto[]> {
+        return this.teamService.getAll(dto);
     }
 
     @Get('/:id')
-    getTeamById(@Param('id') id: number): Promise<TeamModel> {
+    getTeamById(@Param('id') id: number): Promise<ResponseTeamDto> {
         return this.teamService.getById(id);
     }
 
     @Post()
     @UseGuards(JwtAuthGuard)
-    createTeam(@Body() dto: CreateTeamDto): Promise<TeamModel> {
+    createTeam(@Body() dto: CreateTeamDto): Promise<{ message: string }> {
         return this.teamService.create(dto);
     }
 

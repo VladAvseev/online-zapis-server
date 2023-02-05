@@ -1,8 +1,7 @@
-import {HttpCode, HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
 import {InjectModel} from "@nestjs/sequelize";
 import {UserModel} from "./model/user.model";
 import {RoleService} from "../role/role.service";
-import {CreateUserDto} from "./dto/create-user.dto";
 import {RoleModel} from "../role/model/role.model";
 import {CityModel} from "../city/model/city.model";
 import {CityService} from "../city/city.service";
@@ -11,6 +10,7 @@ import {AddRoleDto} from "./dto/add-role.dto";
 import {UpdateUserDto} from "./dto/update-user.dto";
 import {UpdatePasswordDto} from "./dto/update-password.dto";
 import * as bcrypt from "bcryptjs";
+import {RegistrationUserDto} from "../auth/dto/registration-user.dto";
 
 @Injectable()
 export class UserService {
@@ -78,7 +78,7 @@ export class UserService {
         return new ResponseUserDto(user);
     }
 
-    async create(dto: CreateUserDto): Promise<ResponseUserDto> {
+    async create(dto: RegistrationUserDto): Promise<ResponseUserDto> {
         const user: UserModel = await this.userRepository.create(dto);
         const role: RoleModel = await this.roleService.getByValue("CLIENT");
         const city: CityModel = await this.cityService.getById(dto.city_id);

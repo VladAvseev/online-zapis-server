@@ -4,9 +4,7 @@ import {MasterServiceModel} from "../../service/model/master-service.model";
 import {ServiceModel} from "../../service/model/service.model";
 
 interface MasterCreationAttrs {
-    description: string;
-    position: string;
-    schedule: Date[][];
+    id: number;
 }
 
 @Table({tableName: 'master', createdAt: false, updatedAt: false})
@@ -19,10 +17,10 @@ export class MasterModel extends Model<MasterModel, MasterCreationAttrs> {
     @Column({type: DataType.STRING})
     description: string;
 
-    @Column({type: DataType.STRING, allowNull: false})
+    @Column({type: DataType.STRING})
     position: string;
 
-    @Column({type: DataType.ARRAY(DataType.ARRAY(DataType.TIME)), defaultValue: [[],[],[],[],[],[],[]]})
+    @Column({type: DataType.ARRAY(DataType.ARRAY(DataType.TIME))})
     schedule: Date[][];
 
     // MASTER ONE-TO-MANY MASTER-SERVICE
