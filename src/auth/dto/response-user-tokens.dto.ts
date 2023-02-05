@@ -5,7 +5,6 @@ export class ResponseUserTokensDto {
     readonly user: ResponseUserDto;
     readonly tokens: TokensDto;
 
-
     constructor(user: ResponseUserDto, tokens: TokensDto) {
         this.user = user;
         this.tokens = tokens;

@@ -8,11 +8,12 @@ import {UpdatePasswordDto} from "./dto/update-password.dto";
 
 
 @Controller('user')
+@UseGuards(JwtAuthGuard)
 export class UserController {
     constructor(private userService: UserService) {}
 
     @Get()
-     getAllUsers(): Promise<ResponseUserDto[]> {
+    getAllUsers(): Promise<ResponseUserDto[]> {
         return this.userService.getAll();
     }
 
@@ -22,19 +23,22 @@ export class UserController {
     }
 
     @Put(':id')
-    @UseGuards(JwtAuthGuard)
     updateUser(@Param('id') id: number, @Body() userDto: UpdateUserDto): Promise<ResponseUserDto> {
         return this.userService.update(id, userDto);
     }
 
     @Put('/password/:id')
-    @UseGuards(JwtAuthGuard)
-    updatePassword(@Param('id') id: number, @Body() dto: UpdatePasswordDto): Promise<void> {
+    updatePassword(@Param('id') id: number, @Body() dto: UpdatePasswordDto): Promise<{ message: string }> {
         return this.userService.updatePassword(id, dto);
     }
 
     @Post('/role')
     addRole(@Body() addRoleDto: AddRoleDto) {
         return this.userService.addRole(addRoleDto);
+    }
+
+    @Post('/team/:id')
+    addTeam(@Param('id') teamId: number) {
+
     }
 }

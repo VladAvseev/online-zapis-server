@@ -66,7 +66,7 @@ export class AuthService {
         }
         const passwordEquals = await bcrypt.compare(userDto.password, user.password);
         if (passwordEquals) {
-            return ResponseUserDto.toResponseUserDto(user);
+            return new ResponseUserDto(user);
         }
         throw new HttpException({message: 'Неверный пароль'}, HttpStatus.BAD_REQUEST)
     }

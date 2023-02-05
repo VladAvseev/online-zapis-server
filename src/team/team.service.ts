@@ -38,8 +38,10 @@ export class TeamService {
         const tags: TagModel[] = await this.tagService.addTags(dto.tags);
         await team.$set('tags', tags);
 
-        const admin: UserModel = await this.userService.getById(dto.admin_id);
+        const admin: UserModel = await this.userService.getModelById(dto.admin_id);
         await team.$set('users', [admin]);
+
+        //todo: create master model and set master to user model
 
         team.users = [admin];
         team.tags = tags;

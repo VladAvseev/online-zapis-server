@@ -18,34 +18,87 @@ export class UserService {
                 private roleService: RoleService,
                 private cityService: CityService,) {}
 
-    async create(userDto: CreateUserDto): Promise<ResponseUserDto> {
-        const user: UserModel = await this.userRepository.create(userDto);
-        const role: RoleModel = await this.roleService.getByValue("CLIENT");
-        const city: CityModel = await this.cityService.getById(userDto.city_id);
+    // GET: get user by id controller
+    async getById(id: number): Promise<ResponseUserDto> {
+        const user: UserModel = await this.userRepository.findByPk(id, {include: {all: true}});
+        if (!user) {
+            throw new HttpException('Пользователь с таким id не найден', HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseUserDto(user);
+    }
 
-        // set to database
+    // PUT: update user
+    async update(id: number, dto: UpdateUserDto): Promise<ResponseUserDto> {
+        const candidate: ResponseUserDto = await this.getById(id);
+        if (dto.email !== candidate.email) {
+            const candidate = await this.getByEmail(dto.email);
+            if (candidate) {
+                throw new HttpException({massage: "Пользователь с такой почтой уже существует"}, HttpStatus.BAD_REQUEST);
+            }
+        }
+        if (dto.phone !== candidate.phone) {
+            const candidate = await this.getByEmail(dto.email);
+            if (candidate) {
+                throw new HttpException({massage: "Пользователь с таким телефоном уже существует"}, HttpStatus.BAD_REQUEST);
+            }
+        }
+        if (dto.city_id !== candidate.city.id) {
+            await this.cityService.getById(dto.city_id);
+        }
+        await this.userRepository.update(dto, {where: {id}});
+        const user: ResponseUserDto = await this.getById(id);
+        return user;
+    }
+
+    // PUT: update users password
+    async updatePassword(id, dto: UpdatePasswordDto): Promise<{message: string}> {
+        const user: UserModel = await this.getModelById(id);
+        const passwordEquals = await bcrypt.compare(dto.oldPassword, user.password);
+        if (!passwordEquals) {
+            throw new HttpException({message: 'Неверный пароль'}, HttpStatus.BAD_REQUEST)
+        }
+        const newHashPassword = await bcrypt.hash(dto.newPassword, 5);
+        await this.userRepository.update({password: newHashPassword}, {where: {id}});
+        return {message: 'success'}
+    }
+
+    // POST: add new role to user
+    async addRole(dto: AddRoleDto): Promise<ResponseUserDto> {
+        const user: UserModel = await this.getModelById(dto.userId);
+        const role: RoleModel = await this.roleService.getByValue(dto.value);
+        if (!user || !role) {
+            throw new HttpException('Роль или Пользователь не существуют', HttpStatus.BAD_REQUEST);
+        }
+        const userRoles: string[] = user.roles.map(role => {return role.value}) || [];
+        if (userRoles.includes(dto.value)) {
+            throw new HttpException('Выбранный пользователь уже имеет эту роль', HttpStatus.BAD_REQUEST)
+        }
+        await user.$add('role', role.id);
+        user.roles.push(role);
+        return new ResponseUserDto(user);
+    }
+
+    async create(dto: CreateUserDto): Promise<ResponseUserDto> {
+        const user: UserModel = await this.userRepository.create(dto);
+        const role: RoleModel = await this.roleService.getByValue("CLIENT");
+        const city: CityModel = await this.cityService.getById(dto.city_id);
         await user.$set('roles', [role.id]);
         await user.$set('city', city);
-
-        // set to model
         user.city = city;
         user.roles = [role];
-
-        return ResponseUserDto.toResponseUserDto(user);
+        return new ResponseUserDto(user);
     }
 
     async getAll(): Promise<ResponseUserDto[]> {
         const users: UserModel[] = await this.userRepository.findAll({include: {all: true}});
-        return users.map(user => ResponseUserDto.toResponseUserDto(user));
+        return users.map(user => new ResponseUserDto(user));
     }
 
-    async getById(id: number): Promise<UserModel> {
+    async getModelById(id: number): Promise<UserModel> {
         const user: UserModel = await this.userRepository.findByPk(id, {include: {all: true}});
-
         if (!user) {
             throw new HttpException('Пользователь с таким id не найден', HttpStatus.BAD_REQUEST);
         }
-
         return user;
     }
 
@@ -58,11 +111,6 @@ export class UserService {
                 all: true
             }
         });
-
-        if (!user) {
-            throw new HttpException('Пользователь с такой почтой не найден', HttpStatus.BAD_REQUEST);
-        }
-
         return user;
     }
 
@@ -75,65 +123,6 @@ export class UserService {
                 all: true
             }
         });
-
-        if (!user) {
-            throw new HttpException('Пользователь с таким телефоном не найден', HttpStatus.BAD_REQUEST);
-        }
-
         return user;
-    }
-
-    async update(id: number, dto: UpdateUserDto): Promise<ResponseUserDto> {
-        const candidate: UserModel = await this.getById(id);
-
-        if (dto.email !== candidate.email) {
-            const candidate = await this.getByEmail(dto.email);
-            if (candidate) {
-                throw new HttpException({massage: "Пользователь с такой почтой уже существует"}, HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        if (dto.phone !== candidate.phone) {
-            const candidate = await this.getByEmail(dto.email);
-            if (candidate) {
-                throw new HttpException({massage: "Пользователь с таким телефоном уже существует"}, HttpStatus.BAD_REQUEST);
-            }
-        }
-
-        await this.userRepository.update(dto, {where: {id}});
-        const user: UserModel = await this.getById(id);
-
-        return ResponseUserDto.toResponseUserDto(user);
-    }
-
-    async addRole(dto: AddRoleDto): Promise<ResponseUserDto> {
-        const user = await this.getById(dto.userId);
-        const role = await this.roleService.getByValue(dto.value);
-
-        if (!user || !role) {
-            throw new HttpException('Роль или Пользователь не существуют', HttpStatus.BAD_REQUEST);
-        }
-
-        const userRoles: string[] = user.roles.map(role => {return role.value}) || [];
-         if (userRoles.includes(dto.value)) {
-            throw new HttpException('Выбранный пользователь уже имеет эту роль', HttpStatus.BAD_REQUEST)
-        }
-
-        await user.$add('role', role.id);
-        user.roles.push(role);
-
-        return user;
-    }
-
-    async updatePassword(id, dto: UpdatePasswordDto): Promise<void> {
-        const user: UserModel = await this.getById(id);
-
-        const passwordEquals = await bcrypt.compare(dto.oldPassword, user.password);
-        if (!passwordEquals) {
-            throw new HttpException({message: 'Неверный пароль'}, HttpStatus.BAD_REQUEST)
-        }
-
-        const newHashPassword = await bcrypt.hash(dto.newPassword, 5);
-        await this.userRepository.update({password: newHashPassword}, {where: {id}});
     }
 }
