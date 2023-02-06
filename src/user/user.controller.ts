@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, Post, Put, UseGuards} from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Post, Put, UseGuards} from '@nestjs/common';
 import {UserService} from "./user.service";
 import {ResponseUserDto} from "./dto/response-user.dto";
 import {AddRoleDto} from "./dto/add-role.dto";
@@ -37,9 +37,13 @@ export class UserController {
         return this.userService.addRole(addRoleDto);
     }
 
-    //todo add controller in future
     @Post('/team/:id')
-    addTeam(@Param('id') teamId: number) {
+    addTeam(@Param('id') teamId: number, @Body() dto: {user: ResponseUserDto}) {
+        return this.userService.addTeam(teamId, dto.user);
+    }
 
+    @Delete('/team/:id')
+    removeTeam(@Param('id') teamId: number, @Body() dto: {user: ResponseUserDto}) {
+        return this.userService.removeTeam(teamId, dto.user);
     }
 }

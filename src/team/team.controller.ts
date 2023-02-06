@@ -10,7 +10,7 @@ import {ResponseTeamDto} from "./dto/response-team.dto";
 export class TeamController {
     constructor(private teamService: TeamService) {}
 
-    @Get()
+    @Post('/get')
     getAllTeams(@Body() dto: {cityId: number, search: string}): Promise<ResponseTeamDto[]> {
         return this.teamService.getAll(dto);
     }
@@ -27,7 +27,7 @@ export class TeamController {
     }
 
     @Put('/:id')
-    updateTeam(@Param('id') id: number, @Body() dto: UpdateTeamDto): Promise<TeamModel> {
+    updateTeam(@Param('id') id: number, @Body() dto: UpdateTeamDto): Promise<ResponseTeamDto> {
         return this.teamService.update(id, dto);
     }
 }

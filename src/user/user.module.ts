@@ -13,6 +13,7 @@ import {TeamModel} from "../team/model/team.model";
 import {MasterModel} from "../master/model/master.model";
 import {TicketModel} from "../ticket/model/ticket.model";
 import {UserTeamModel} from "../team/model/user-team.model";
+import {TeamModule} from "../team/team.module";
 
 @Module({
     controllers: [UserController],
@@ -20,8 +21,9 @@ import {UserTeamModel} from "../team/model/user-team.model";
     imports: [
         SequelizeModule.forFeature([UserModel, RoleModel, UserRoleModel, CityModel, TeamModel, MasterModel, TicketModel, UserTeamModel]),
         RoleModule,
-        TokenModule,
+        forwardRef(() => TokenModule),
         CityModule,
+        forwardRef(() => TeamModule)
     ],
     exports: [UserService],
 })

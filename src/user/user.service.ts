@@ -11,12 +11,16 @@ import {UpdateUserDto} from "./dto/update-user.dto";
 import {UpdatePasswordDto} from "./dto/update-password.dto";
 import * as bcrypt from "bcryptjs";
 import {RegistrationUserDto} from "../auth/dto/registration-user.dto";
+import {TeamModel} from "../team/model/team.model";
+import {TeamService} from "../team/team.service";
+import {log} from "util";
 
 @Injectable()
 export class UserService {
     constructor(@InjectModel(UserModel) private userRepository: typeof UserModel,
                 private roleService: RoleService,
-                private cityService: CityService,) {}
+                private cityService: CityService,
+                private teamService: TeamService) {}
 
     // GET: get user by id controller
     async getById(id: number): Promise<ResponseUserDto> {
@@ -67,15 +71,37 @@ export class UserService {
         const user: UserModel = await this.getModelById(dto.userId);
         const role: RoleModel = await this.roleService.getByValue(dto.value);
         if (!user || !role) {
-            throw new HttpException('Роль или Пользователь не существуют', HttpStatus.BAD_REQUEST);
+            throw new HttpException({message: 'Роль или Пользователь не существуют'}, HttpStatus.BAD_REQUEST);
         }
         const userRoles: string[] = user.roles.map(role => {return role.value}) || [];
         if (userRoles.includes(dto.value)) {
-            throw new HttpException('Выбранный пользователь уже имеет эту роль', HttpStatus.BAD_REQUEST)
+            throw new HttpException({message: 'Выбранный пользователь уже имеет эту роль'}, HttpStatus.BAD_REQUEST)
         }
         await user.$add('role', role.id);
         user.roles.push(role);
         return new ResponseUserDto(user);
+    }
+
+    // POST: add team to user saves
+    async addTeam(teamId: number, dto: ResponseUserDto): Promise<{message: string}> {
+        const user: UserModel = await this.getModelById(dto.id);
+        const team: TeamModel = await this.teamService.getModelById(teamId);
+        if (user.teams.map(team => team.id).includes(team.id)) {
+            throw new HttpException({message: 'Команда уже добавлена в избранное'}, HttpStatus.BAD_REQUEST);
+        }
+        await user.$add('team', team.id);
+        return {message: 'success'}
+    }
+
+    // DELETE: remove team from user saves
+    async removeTeam(teamId: number, dto: ResponseUserDto): Promise<{message: string}> {
+        const user: UserModel = await this.getModelById(dto.id);
+        const team: TeamModel = await this.teamService.getModelById(teamId);
+        if (!user.teams.map(team => team.id).includes(team.id)) {
+            throw new HttpException({message: 'Данной команды нет в избранном'}, HttpStatus.BAD_REQUEST);
+        }
+        await user.$remove('team', team.id);
+        return {message: 'success'}
     }
 
     async create(dto: RegistrationUserDto): Promise<ResponseUserDto> {
@@ -97,7 +123,7 @@ export class UserService {
     async getModelById(id: number): Promise<UserModel> {
         const user: UserModel = await this.userRepository.findByPk(id, {include: {all: true}});
         if (!user) {
-            throw new HttpException('Пользователь с таким id не найден', HttpStatus.BAD_REQUEST);
+            throw new HttpException({message: 'Пользователь с таким id не найден'}, HttpStatus.BAD_REQUEST);
         }
         return user;
     }

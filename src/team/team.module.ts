@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {forwardRef, Module} from '@nestjs/common';
 import { TeamController } from './team.controller';
 import { TeamService } from './team.service';
 import {SequelizeModule} from "@nestjs/sequelize";
@@ -21,8 +21,9 @@ import {MasterModule} from "../master/master.module";
       SequelizeModule.forFeature([TeamModel, TagModel, TeamTagModel, UserModel, CityModel, ServiceModel, UserTeamModel]),
       TokenModule,
       TagModule,
-      UserModule,
+      forwardRef(() => UserModule),
       MasterModule,
-  ]
+  ],
+    exports: [TeamService]
 })
 export class TeamModule {}

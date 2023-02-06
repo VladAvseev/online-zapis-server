@@ -1,4 +1,4 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
+import {forwardRef, HttpException, HttpStatus, Inject, Injectable} from '@nestjs/common';
 import {InjectModel} from "@nestjs/sequelize";
 import {TeamModel} from "./model/team.model";
 import {CreateTeamDto} from "./dto/create-team.dto";
@@ -15,10 +15,11 @@ import {ResponseTeamDto} from "./dto/response-team.dto";
 export class TeamService {
     constructor(@InjectModel(TeamModel) private teamRepository: typeof TeamModel,
                 private tagService: TagService,
+                @Inject(forwardRef(() => UserService))
                 private userService: UserService,
                 private masterService: MasterService) {}
 
-    // GET: get all teams in current town
+    // POST: get all teams in current town
     async getAll(dto: {cityId: number, search: string}): Promise<ResponseTeamDto[]> {
         const teams: TeamModel[] = await this.teamRepository.findAll({include: {all: true}});
         const filterTeams: TeamModel[] = teams.filter(team => {
@@ -41,12 +42,13 @@ export class TeamService {
         const team: TeamModel = await this.teamRepository.findByPk(id, {include: {all: true}});
 
         if (!team) {
-            throw new HttpException('Команда с таким id не найден', HttpStatus.BAD_REQUEST);
+            throw new HttpException({message: 'Команда с таким id не найден'}, HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseTeamDto(team);
     }
 
+    // POST
     async create(dto: CreateTeamDto): Promise<{ message: string }> {
         const admin: UserModel = await this.userService.getModelById(dto.admin_id);
 
@@ -71,7 +73,7 @@ export class TeamService {
         return {message: 'success'};
     }
 
-    async update(id: number, dto: UpdateTeamDto): Promise<TeamModel> {
+    async update(id: number, dto: UpdateTeamDto): Promise<ResponseTeamDto> {
         if (!dto.team.title || !dto.team.email || !dto.team.city_id) {
             throw new HttpException({message: 'Не все обязательные поля заполнены'}, HttpStatus.BAD_REQUEST);
         }
@@ -82,14 +84,14 @@ export class TeamService {
         const team: TeamModel = await this.getModelById(id);
         await team.$set('tags', tags);
         team.tags = tags;
-        return team;
+        return new ResponseTeamDto(team);
     }
 
     async getModelById(id: number): Promise<TeamModel> {
         const team: TeamModel = await this.teamRepository.findByPk(id, {include: {all: true}});
 
         if (!team) {
-            throw new HttpException('Команда с таким id не найден', HttpStatus.BAD_REQUEST);
+            throw new HttpException({message: 'Команда с таким id не найден'}, HttpStatus.BAD_REQUEST);
         }
 
         return team;
