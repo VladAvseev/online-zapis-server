@@ -8,6 +8,6 @@ export class ResponseUserTeamDto {
     constructor(team: TeamModel) {
         this.id = team.id;
         this.title = team.title;
-        this.description = team.description || null
+        this.description = team.description || null;
     }
 }
