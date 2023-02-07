@@ -112,6 +112,7 @@ export class UserService {
         await user.$set('city', city);
         user.city = city;
         user.roles = [role];
+        user.teams = [];
         return new ResponseUserDto(user);
     }
 

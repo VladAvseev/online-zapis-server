@@ -24,6 +24,6 @@ export class ResponseUserDto {
         this.city = user.city;
         this.roles = user.roles.map(role => new ResponseRoleDto(role));
         this.master = new ResponseUserMasterDto(user.master);
-        this.teams = user?.teams.map(team => new ResponseUserTeamDto(team));
+        this.teams = user.teams.map(team => new ResponseUserTeamDto(team));
     }
 }
