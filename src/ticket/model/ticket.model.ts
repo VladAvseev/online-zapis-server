@@ -21,6 +21,9 @@ export class TicketModel extends Model<TicketModel, TicketCreationAttrs> {
     @Column({type: DataType.BOOLEAN, defaultValue: false})
     is_cancel: boolean;
 
+    @Column({type: DataType.BOOLEAN, defaultValue: false})
+    is_changed: boolean;
+
     // TICKET ONE-TO-MANY MASTER-SERVICE
     @ForeignKey(() => MasterServiceModel)
     @Column({type: DataType.INTEGER, allowNull: false, onDelete: 'CASCADE'})
