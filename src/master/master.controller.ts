@@ -1,6 +1,9 @@
-import {Body, Controller, Post, UseGuards} from '@nestjs/common';
+import {Body, Controller, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors} from '@nestjs/common';
 import {MasterService} from "./master.service";
 import {JwtAuthGuard} from "../auth/guard/jwt-auth.guard";
+import {ResponseMasterDto} from "./dto/response-master.dto";
+import {CreateMasterDto} from "./dto/create-master.dto";
+import {FileInterceptor} from "@nestjs/platform-express";
 
 @Controller('master')
 export class MasterController {
@@ -10,5 +13,14 @@ export class MasterController {
     @UseGuards(JwtAuthGuard)
     inviteMaster(@Body() email: string): Promise<{message: string}> {
         return this.masterService.invite(email)
+    }
+
+    @Put(':id')
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FileInterceptor('image'))
+    updateMaster(@Param('id') id: number,
+                 @Body() dto: CreateMasterDto,
+                 @UploadedFile() image): Promise<ResponseMasterDto> {
+        return this.masterService.update(id, dto, image);
     }
 }

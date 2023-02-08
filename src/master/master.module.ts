@@ -7,13 +7,15 @@ import {ServiceModel} from "../service/model/service.model";
 import {MasterServiceModel} from "../service/model/master-service.model";
 import {UserModel} from "../user/model/user.model";
 import {TokenModule} from "../token/token.module";
+import {FileModule} from "../file/file.module";
 
 @Module({
   controllers: [MasterController],
   providers: [MasterService],
   imports: [
       SequelizeModule.forFeature([MasterModel, UserModel, ServiceModel, MasterServiceModel]),
-      TokenModule
+      TokenModule,
+      FileModule,
   ],
     exports: [MasterService]
 })

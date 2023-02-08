@@ -10,6 +10,7 @@ import {UpdateTeamDto} from "./dto/update-team.dto";
 import {MasterModel} from "../master/model/master.model";
 import {MasterService} from "../master/master.service";
 import {ResponseTeamDto} from "./dto/response-team.dto";
+import {FileService} from "../file/file.service";
 
 @Injectable()
 export class TeamService {
@@ -17,7 +18,8 @@ export class TeamService {
                 private tagService: TagService,
                 @Inject(forwardRef(() => UserService))
                 private userService: UserService,
-                private masterService: MasterService) {}
+                private masterService: MasterService,
+                private fileService: FileService) {}
 
     // POST: get all teams in current town
     async getAll(dto: {cityId: number, search: string}): Promise<ResponseTeamDto[]> {
@@ -73,18 +75,28 @@ export class TeamService {
         return {message: 'success'};
     }
 
-    async update(id: number, dto: UpdateTeamDto): Promise<ResponseTeamDto> {
-        if (!dto.team.title || !dto.team.email || !dto.team.city_id) {
+    async update(id: number, dto: UpdateTeamDto, image: any): Promise<ResponseTeamDto> {
+        if (!dto.title || !dto.email || !dto.city_id) {
             throw new HttpException({message: 'Не все обязательные поля заполнены'}, HttpStatus.BAD_REQUEST);
         }
 
-        await this.teamRepository.update(dto.team, {where: {id}})
+        const team: TeamModel = await this.getModelById(id);
+        const fileName: string = await this.fileService.createFile(image, team.image);
+
+        await this.teamRepository.update({
+            title: dto.title,
+            phone: dto.phone,
+            email: dto.email,
+            address: dto.address,
+            city_id: dto.city_id,
+            image: fileName
+        }, {where: {id}})
 
         const tags: TagModel[] = await this.tagService.addTags(dto.tags);
-        const team: TeamModel = await this.getModelById(id);
-        await team.$set('tags', tags);
-        team.tags = tags;
-        return new ResponseTeamDto(team);
+        const updatedTeam: TeamModel = await this.getModelById(id);
+        await updatedTeam.$set('tags', tags);
+        updatedTeam.tags = tags;
+        return new ResponseTeamDto(updatedTeam);
     }
 
     async getModelById(id: number): Promise<TeamModel> {

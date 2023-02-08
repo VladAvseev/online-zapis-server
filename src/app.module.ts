@@ -24,12 +24,18 @@ import {ServiceModel} from "./service/model/service.model";
 import {MasterServiceModel} from "./service/model/master-service.model";
 import {TicketModel} from "./ticket/model/ticket.model";
 import {UserTeamModel} from "./team/model/user-team.model";
+import { FileModule } from './file/file.module';
+import {ServeStaticModule} from "@nestjs/serve-static";
+import * as path from "path";
 
 @Module({
   imports: [
       ConfigModule.forRoot({
         envFilePath: '.env',
         isGlobal: true,
+      }),
+      ServeStaticModule.forRoot({
+          rootPath: path.resolve(__dirname, 'static'),
       }),
       SequelizeModule.forRoot({
           dialect: 'postgres',
@@ -65,6 +71,7 @@ import {UserTeamModel} from "./team/model/user-team.model";
       MasterModule,
       ServiceModule,
       TicketModule,
+      FileModule,
   ],
 })
 export class AppModule {}

@@ -13,6 +13,7 @@ import {TagModule} from "../tag/tag.module";
 import {UserModule} from "../user/user.module";
 import {UserTeamModel} from "./model/user-team.model";
 import {MasterModule} from "../master/master.module";
+import {FileModule} from "../file/file.module";
 
 @Module({
   controllers: [TeamController],
@@ -23,6 +24,7 @@ import {MasterModule} from "../master/master.module";
       TagModule,
       forwardRef(() => UserModule),
       MasterModule,
+      FileModule
   ],
     exports: [TeamService]
 })

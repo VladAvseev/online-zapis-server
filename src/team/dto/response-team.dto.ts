@@ -10,6 +10,7 @@ export class ResponseTeamDto {
     readonly description: string | null;
     readonly city: CityModel;
     readonly admin_id: number;
+    readonly image: string;
     readonly tags: ResponseTagDto[];
 
     constructor(team: TeamModel) {
@@ -20,6 +21,7 @@ export class ResponseTeamDto {
         this.description = team.description || null
         this.city = team.city;
         this.admin_id = team.admin_id;
+        this.image = team.image;
         this.tags = team.tags.map(tag => new ResponseTagDto(tag));
     }
 }

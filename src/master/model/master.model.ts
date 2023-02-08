@@ -20,6 +20,9 @@ export class MasterModel extends Model<MasterModel, MasterCreationAttrs> {
     @Column({type: DataType.STRING})
     position: string;
 
+    @Column({type: DataType.STRING})
+    image: string;
+
     @Column({type: DataType.ARRAY(DataType.ARRAY(DataType.TIME))})
     schedule: Date[][];
 

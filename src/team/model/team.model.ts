@@ -44,6 +44,12 @@ export class TeamModel extends Model<TeamModel, TeamCreationAttrs> {
     @Column({type: DataType.TEXT})
     description: string;
 
+    @Column({type: DataType.STRING})
+    image: string;
+
+    @Column({type: DataType.STRING})
+    address: string;
+
     // TEAM MANY-TO-ONE CITY
     @ForeignKey(() => CityModel)
     @Column({type: DataType.INTEGER, allowNull: true, onDelete: 'SET NULL'})

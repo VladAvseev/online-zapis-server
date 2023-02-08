@@ -1,10 +1,11 @@
-import {Body, Controller, Get, Param, Post, Put, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors} from '@nestjs/common';
 import {TeamService} from "./team.service";
 import {TeamModel} from "./model/team.model";
 import {CreateTeamDto} from "./dto/create-team.dto";
 import {JwtAuthGuard} from "../auth/guard/jwt-auth.guard";
 import {UpdateTeamDto} from "./dto/update-team.dto";
 import {ResponseTeamDto} from "./dto/response-team.dto";
+import {FileInterceptor} from "@nestjs/platform-express";
 
 @Controller('team')
 export class TeamController {
@@ -27,7 +28,11 @@ export class TeamController {
     }
 
     @Put('/:id')
-    updateTeam(@Param('id') id: number, @Body() dto: UpdateTeamDto): Promise<ResponseTeamDto> {
-        return this.teamService.update(id, dto);
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FileInterceptor('image'))
+    updateTeam(@Param('id') id: number,
+               @Body() dto: UpdateTeamDto,
+               @UploadedFile() image): Promise<ResponseTeamDto> {
+        return this.teamService.update(id, dto, image);
     }
 }

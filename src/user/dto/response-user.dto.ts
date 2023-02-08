@@ -1,7 +1,7 @@
 import {UserModel} from "../model/user.model";
 import {CityModel} from "../../city/model/city.model";
 import {ResponseRoleDto} from "../../role/dto/response-role.dto";
-import {ResponseUserMasterDto} from "../../master/dto/response-user-master.dto";
+import {ResponseMasterDto} from "../../master/dto/response-master.dto";
 import {ResponseUserTeamDto} from "../../team/dto/response-user-team.dto";
 
 export class ResponseUserDto {
@@ -12,7 +12,7 @@ export class ResponseUserDto {
     readonly team_id?: number;
     readonly city: CityModel;
     readonly roles: ResponseRoleDto[];
-    readonly master: ResponseUserMasterDto;
+    readonly master: ResponseMasterDto;
     readonly teams: ResponseUserTeamDto[];
 
     constructor(user: UserModel) {
@@ -23,7 +23,7 @@ export class ResponseUserDto {
         this.team_id = user.team_id || null;
         this.city = user.city;
         this.roles = user.roles.map(role => new ResponseRoleDto(role));
-        this.master = new ResponseUserMasterDto(user.master);
+        this.master = new ResponseMasterDto(user.master);
         this.teams = user.teams.map(team => new ResponseUserTeamDto(team));
     }
 }
