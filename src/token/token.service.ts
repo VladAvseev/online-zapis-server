@@ -22,17 +22,7 @@ export class TokenService {
     }
 
     async saveToken(tokenDto: SaveTokenDto): Promise<TokenModel> {
-        const tokenData: TokenModel = await this.tokenRepository.findOne({
-            where: {
-                user_id: tokenDto.user_id
-            }
-        });
-
-        if (tokenData) {
-            await tokenData.set('refresh_token', tokenDto.refresh_token);
-            return tokenData;
-        }
-
+        await this.remove(tokenDto.user_id);
         const token: TokenModel = await this.tokenRepository.create(tokenDto);
         return token;
     }
