@@ -50,7 +50,7 @@ export class TeamService {
         return new ResponseTeamDto(team);
     }
 
-    // POST
+    // POST: create team
     async create(dto: CreateTeamDto): Promise<{ message: string }> {
         const admin: UserModel = await this.userService.getModelById(dto.admin_id);
 
@@ -75,28 +75,26 @@ export class TeamService {
         return {message: 'success'};
     }
 
-    async update(id: number, dto: UpdateTeamDto, image: any): Promise<ResponseTeamDto> {
+    // PUT update team info
+    async update(id: number, dto: UpdateTeamDto, tagsDto: string[]): Promise<ResponseTeamDto> {
         if (!dto.title || !dto.email || !dto.city_id) {
             throw new HttpException({message: 'Не все обязательные поля заполнены'}, HttpStatus.BAD_REQUEST);
         }
 
-        const team: TeamModel = await this.getModelById(id);
-        const fileName: string = await this.fileService.createFile(image, team.image);
+        await this.teamRepository.update(dto, {where: {id}})
 
-        await this.teamRepository.update({
-            title: dto.title,
-            phone: dto.phone,
-            email: dto.email,
-            address: dto.address,
-            city_id: dto.city_id,
-            image: fileName
-        }, {where: {id}})
-
-        const tags: TagModel[] = await this.tagService.addTags(dto.tags);
+        const tags: TagModel[] = await this.tagService.addTags(tagsDto);
         const updatedTeam: TeamModel = await this.getModelById(id);
         await updatedTeam.$set('tags', tags);
         updatedTeam.tags = tags;
         return new ResponseTeamDto(updatedTeam);
+    }
+
+    async updateImage(id: number, image: any): Promise<{message: string}> {
+        const team: TeamModel = await this.getModelById(id);
+        const fileName: string = await this.fileService.createFile(image, team.image);
+        await this.teamRepository.update({image: fileName}, {where: {id}});
+        return {message: 'success'};
     }
 
     async getModelById(id: number): Promise<TeamModel> {

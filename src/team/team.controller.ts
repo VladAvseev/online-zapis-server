@@ -29,10 +29,16 @@ export class TeamController {
 
     @Put('/:id')
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(FileInterceptor('image'))
     updateTeam(@Param('id') id: number,
-               @Body() dto: UpdateTeamDto,
-               @UploadedFile() image): Promise<ResponseTeamDto> {
-        return this.teamService.update(id, dto, image);
+               @Body() dto: {team: UpdateTeamDto, tags: string[]}): Promise<ResponseTeamDto> {
+        return this.teamService.update(id, dto.team, dto.tags);
+    }
+
+    @Put('/:id/image')
+    @UseGuards(JwtAuthGuard)
+    @UseInterceptors(FileInterceptor('image'))
+    updateImage(@Param('id') id: number,
+                @UploadedFile() image): Promise<{message: string}> {
+        return this.teamService.updateImage(id, image);
     }
 }
