@@ -77,10 +77,6 @@ export class TeamService {
 
     // PUT update team info
     async update(id: number, dto: UpdateTeamDto, tagsDto: string[]): Promise<ResponseTeamDto> {
-        if (!dto.title || !dto.email || !dto.city_id) {
-            throw new HttpException({message: 'Не все обязательные поля заполнены'}, HttpStatus.BAD_REQUEST);
-        }
-
         await this.teamRepository.update(dto, {where: {id}})
 
         const tags: TagModel[] = await this.tagService.addTags(tagsDto);
