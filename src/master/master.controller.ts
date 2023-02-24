@@ -1,4 +1,4 @@
-import {Body, Controller, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors} from '@nestjs/common';
+import {Body, Controller, Delete, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors} from '@nestjs/common';
 import {MasterService} from "./master.service";
 import {JwtAuthGuard} from "../auth/guard/jwt-auth.guard";
 import {ResponseMasterDto} from "./dto/response-master.dto";
@@ -22,5 +22,11 @@ export class MasterController {
                  @Body() dto: CreateMasterDto,
                  @UploadedFile() image): Promise<ResponseMasterDto> {
         return this.masterService.update(id, dto, image);
+    }
+
+    @Delete('/:id/image')
+    @UseGuards(JwtAuthGuard)
+    deleteImage(@Param('id') id: number): Promise<{message: string}> {
+        return this.masterService.deleteImage(id);
     }
 }

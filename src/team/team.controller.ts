@@ -1,4 +1,15 @@
-import {Body, Controller, Get, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    Put,
+    UploadedFile,
+    UseGuards,
+    UseInterceptors
+} from '@nestjs/common';
 import {TeamService} from "./team.service";
 import {TeamModel} from "./model/team.model";
 import {CreateTeamDto} from "./dto/create-team.dto";
@@ -40,5 +51,11 @@ export class TeamController {
     updateImage(@Param('id') id: number,
                 @UploadedFile() image): Promise<{message: string}> {
         return this.teamService.updateImage(id, image);
+    }
+
+    @Delete('/:id/image')
+    @UseGuards(JwtAuthGuard)
+    deleteImage(@Param('id') id: number): Promise<{message: string}> {
+        return this.teamService.deleteImage(id);
     }
 }

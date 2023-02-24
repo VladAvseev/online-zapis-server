@@ -22,4 +22,14 @@ export class FileService {
         }
     }
 
+    async deleteFile(filename): Promise<void> {
+        try {
+            const filepath = path.resolve(__dirname, '..', 'static', filename);
+            fs.unlink(filepath, (err) => {
+                console.log(err);
+            });
+        }catch (e) {
+            throw new HttpException({message: 'Произошла ошибка при удалении файла'}, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

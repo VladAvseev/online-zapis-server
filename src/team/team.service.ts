@@ -86,10 +86,19 @@ export class TeamService {
         return new ResponseTeamDto(updatedTeam);
     }
 
+    // PUT update image
     async updateImage(id: number, image: any): Promise<{message: string}> {
         const team: TeamModel = await this.getModelById(id);
         const fileName: string = await this.fileService.createFile(image, team.image);
         await this.teamRepository.update({image: fileName}, {where: {id}});
+        return {message: 'success'};
+    }
+
+    // DELETE delete image
+    async deleteImage(id: number): Promise<{message: string}> {
+        const team: TeamModel = await this.getModelById(id);
+        await this.fileService.deleteFile(team.image);
+        await team.$set('image', null);
         return {message: 'success'};
     }
 
