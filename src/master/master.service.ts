@@ -27,7 +27,7 @@ export class MasterService {
     async deleteImage(id: number): Promise<{message: string}> {
         const master: MasterModel = await this.getModelById(id);
         await this.fileService.deleteFile(master.image);
-        await master.$set('image', null);
+        await master.update({image: null});
         return {message: 'success'};
     }
 
