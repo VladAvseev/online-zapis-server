@@ -1,3 +1,5 @@
+import {CreateTagDto} from "../../tag/dto/create-tag.dto";
+
 export class CreateTeamDto {
     readonly admin_id: number;
     readonly title: string;
@@ -5,5 +7,5 @@ export class CreateTeamDto {
     readonly email: string;
     readonly address: string;
     readonly city_id: number;
-    readonly tags: string[];
+    readonly tags: CreateTagDto[];
 }

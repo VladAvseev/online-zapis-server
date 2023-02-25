@@ -11,6 +11,7 @@ import {MasterModel} from "../master/model/master.model";
 import {MasterService} from "../master/master.service";
 import {ResponseTeamDto} from "./dto/response-team.dto";
 import {FileService} from "../file/file.service";
+import {CreateTagDto} from "../tag/dto/create-tag.dto";
 
 @Injectable()
 export class TeamService {
@@ -76,14 +77,30 @@ export class TeamService {
     }
 
     // PUT update team info
-    async update(id: number, dto: UpdateTeamDto, tagsDto: string[]): Promise<ResponseTeamDto> {
+    async update(id: number, dto: UpdateTeamDto): Promise<ResponseTeamDto> {
         await this.teamRepository.update(dto, {where: {id}})
-
-        const tags: TagModel[] = await this.tagService.addTags(tagsDto);
         const updatedTeam: TeamModel = await this.getModelById(id);
-        await updatedTeam.$set('tags', tags);
-        updatedTeam.tags = tags;
         return new ResponseTeamDto(updatedTeam);
+    }
+
+    // POST add tag
+    async addTag(id: number, dto: CreateTagDto): Promise<{ message: string }> {
+        const [tag]: TagModel[] = await this.tagService.addTags([dto]);
+        const team: TeamModel = await this.getModelById(id);
+        if (!team.tags.filter((tag) => tag.value === dto.value).length) {
+            await team.$set('tags', [...team.tags, tag]);
+        } else {
+            throw new HttpException({message: 'Такой тег уже присутствует'}, HttpStatus.BAD_REQUEST);
+        }
+        return {message: 'success'};
+    }
+
+    // DELETE delete tag
+    async deleteTag(id: number, dto: CreateTagDto): Promise<{ message: string }> {
+        const tag: TagModel = await this.tagService.getByValue(dto.value);
+        const team: TeamModel = await this.getModelById(id);
+        await team.$remove('tags', tag);
+        return {message: 'success'};
     }
 
     // PUT update image
@@ -98,7 +115,7 @@ export class TeamService {
     async deleteImage(id: number): Promise<{message: string}> {
         const team: TeamModel = await this.getModelById(id);
         await this.fileService.deleteFile(team.image);
-        await team.$set('image', null);
+        await team.update({image: null});
         return {message: 'success'};
     }
 

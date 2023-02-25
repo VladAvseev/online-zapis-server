@@ -17,6 +17,7 @@ import {JwtAuthGuard} from "../auth/guard/jwt-auth.guard";
 import {UpdateTeamDto} from "./dto/update-team.dto";
 import {ResponseTeamDto} from "./dto/response-team.dto";
 import {FileInterceptor} from "@nestjs/platform-express";
+import {CreateTagDto} from "../tag/dto/create-tag.dto";
 
 @Controller('team')
 export class TeamController {
@@ -41,9 +42,24 @@ export class TeamController {
     @Put('/:id')
     @UseGuards(JwtAuthGuard)
     updateTeam(@Param('id') id: number,
-               @Body() dto: {team: UpdateTeamDto, tags: string[]}): Promise<ResponseTeamDto> {
-        return this.teamService.update(id, dto.team, dto.tags);
+               @Body() dto: UpdateTeamDto): Promise<ResponseTeamDto> {
+        return this.teamService.update(id, dto);
     }
+
+    @Post('/:id/tag')
+    @UseGuards(JwtAuthGuard)
+    addTag(@Param('id') id: number,
+           @Body() dto: CreateTagDto): Promise<{ message: string }> {
+        return this.teamService.addTag(id, dto);
+    }
+
+    @Delete('/:id/tag')
+    @UseGuards(JwtAuthGuard)
+    deleteTag(@Param('id') id: number,
+              @Body() dto: CreateTagDto): Promise<{ message: string }> {
+        return this.teamService.deleteTag(id, dto);
+    }
+
 
     @Put('/:id/image')
     @UseGuards(JwtAuthGuard)
