@@ -22,16 +22,21 @@ export class TeamService {
                 private masterService: MasterService,
                 private fileService: FileService) {}
 
-    // POST: get all teams in current town
+    // POST: get all teams in current town (search)
     async getAll(dto: {cityId: number, search: string}): Promise<ResponseTeamDto[]> {
         const teams: TeamModel[] = await this.teamRepository.findAll({include: {all: true}});
         const filterTeams: TeamModel[] = teams.filter(team => {
-            if (team.city.id === dto.cityId) {
+            if (!dto.cityId || team.city.id === dto.cityId) {
                 let isSearched = false;
                 team.tags.forEach(tag => {
-                    if (tag.value.toLowerCase().includes(dto.search.toLowerCase())) {
-                        isSearched = true;
+                    if (!dto.search) {
+                        return true;
                     }
+                    dto.search.split(' ').forEach((word) => {
+                        if (tag.value.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(tag.value.toLowerCase())) {
+                            isSearched = true;
+                        }
+                    });
                 })
                 return isSearched;
             }
