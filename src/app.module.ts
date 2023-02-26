@@ -26,6 +26,7 @@ import {TicketModel} from "./ticket/model/ticket.model";
 import {UserTeamModel} from "./team/model/user-team.model";
 import { FileModule } from './file/file.module';
 import {ServeStaticModule} from "@nestjs/serve-static";
+import { EmailModule } from './email/email.module';
 import * as path from "path";
 
 @Module({
@@ -72,6 +73,7 @@ import * as path from "path";
       ServiceModule,
       TicketModule,
       FileModule,
+      EmailModule,
   ],
 })
 export class AppModule {}
