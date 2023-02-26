@@ -6,12 +6,14 @@ import {ServiceModel} from "./model/service.model";
 import {MasterModel} from "../master/model/master.model";
 import {MasterServiceModel} from "./model/master-service.model";
 import {TeamModel} from "../team/model/team.model";
+import {TeamModule} from "../team/team.module";
 
 @Module({
   providers: [ServiceService],
   controllers: [ServiceController],
   imports: [
-    SequelizeModule.forFeature([ServiceModel, MasterModel, MasterServiceModel, TeamModel])
+      SequelizeModule.forFeature([ServiceModel, MasterModel, MasterServiceModel, TeamModel]),
+      TeamModule,
   ],
 })
 export class ServiceModule {}
