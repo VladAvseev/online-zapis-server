@@ -3,6 +3,8 @@ import {InjectModel} from "@nestjs/sequelize";
 import {ServiceModel} from "./model/service.model";
 import {TeamModel} from "../team/model/team.model";
 import {TeamService} from "../team/team.service";
+import {CreateServiceDto} from "./dto/create-service.dto";
+import {UpdateServiceDto} from "./dto/update-service.dto";
 
 @Injectable()
 export class ServiceService {

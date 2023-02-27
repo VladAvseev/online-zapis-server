@@ -9,10 +9,10 @@ export class ServiceController {
     constructor(private serviceService: ServiceService) {
     }
 
-    @Get()
-    getAllServices(): Promise<ServiceModel[]> {
-        return this.serviceService.getAll();
-    }
+    // @Get()
+    // getAllServices(): Promise<ServiceModel[]> {
+    //     return this.serviceService.getAll();
+    // }
 
     @Get(':id')
     getServiceById(@Param('id') id: number): Promise<ServiceModel> {
