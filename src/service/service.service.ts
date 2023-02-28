@@ -5,23 +5,24 @@ import {TeamModel} from "../team/model/team.model";
 import {TeamService} from "../team/team.service";
 import {CreateServiceDto} from "./dto/create-service.dto";
 import {UpdateServiceDto} from "./dto/update-service.dto";
+import {ResponseServiceDto} from "./dto/response-service.dto";
 
 @Injectable()
 export class ServiceService {
     constructor(@InjectModel(ServiceModel) private serviceRepository: typeof ServiceModel,
                 private teamService: TeamService) {}
 
-    async getAll(): Promise<ServiceModel[]> {
-        const services: ServiceModel[] = await this.serviceRepository.findAll({include: {all: true}});
-        return services;
+    async getAll(id: number): Promise<ResponseServiceDto[]> {
+        const services: ServiceModel[] = await this.serviceRepository.findAll({include: {all: true}, where: {team_id: id}});
+        return services.map((service) => new ResponseServiceDto(service));
     }
 
-    async getById(id: number): Promise<ServiceModel> {
+    async getById(id: number): Promise<ResponseServiceDto> {
         const service: ServiceModel = await this.getModelById(id);
-        return service;
+        return new ResponseServiceDto(service);
     }
 
-    async create(dto: CreateServiceDto): Promise<ServiceModel> {
+    async create(dto: CreateServiceDto): Promise<ResponseServiceDto> {
         if (!dto.title || !dto.description || !dto.currency || !dto.price || !dto.duration || !dto.team_id) {
             throw new HttpException({message: 'Не все поля заполнены'}, HttpStatus.BAD_REQUEST);
         }
@@ -31,7 +32,7 @@ export class ServiceService {
 
         await team.$set('services', [...team.services, service]);
 
-        return service;
+        return new ResponseServiceDto(service);
     }
 
     async update(id: number, dto: UpdateServiceDto): Promise<{message: string}> {

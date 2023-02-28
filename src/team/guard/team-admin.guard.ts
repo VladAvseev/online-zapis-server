@@ -7,20 +7,16 @@ import {
 } from "@nestjs/common";
 import {Observable} from "rxjs";
 import {TokenService} from "../../token/token.service";
-import {Reflector} from "@nestjs/core";
-import {ROLES_KEY} from "../decorator/roles-auth.decorator";
+import {TeamService} from "../team.service";
+import {TeamModel} from "../model/team.model";
 
 @Injectable()
-export class RolesAuthGuard implements CanActivate {
+export class TeamAdminGuard implements CanActivate {
     constructor(private tokenService: TokenService,
-                private reflector: Reflector) {}
+                private teamService: TeamService) {}
 
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    async canActivate(context: ExecutionContext){
         try {
-            const requiredRoles = this.reflector.getAllAndOverride(ROLES_KEY, [context.getHandler(), context.getClass()]);
-            if (!requiredRoles) {
-                return true;
-            }
             const req = context.switchToHttp().getRequest();
             const authHeader = req.headers.authorization;
             const [bearer, token] = authHeader.split(' ');
@@ -28,8 +24,8 @@ export class RolesAuthGuard implements CanActivate {
                 throw new HttpException('Нет доступа', HttpStatus.FORBIDDEN);
             }
             const user = this.tokenService.validateAccessToken(token);
-            req.user = {...user};
-            return user.roles.some(role => requiredRoles.includes(role.value));
+            const team: TeamModel = await this.teamService.getModelById(req.params.id);
+            return user.id === team.admin_id;
         } catch (e) {
             throw new HttpException('Нет доступа', HttpStatus.FORBIDDEN);
         }

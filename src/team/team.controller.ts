@@ -18,6 +18,7 @@ import {UpdateTeamDto} from "./dto/update-team.dto";
 import {ResponseTeamDto} from "./dto/response-team.dto";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {CreateTagDto} from "../tag/dto/create-tag.dto";
+import {TeamAdminGuard} from "./guard/team-admin.guard";
 
 @Controller('team')
 export class TeamController {
@@ -40,21 +41,21 @@ export class TeamController {
     }
 
     @Put('/:id')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, TeamAdminGuard)
     updateTeam(@Param('id') id: number,
                @Body() dto: UpdateTeamDto): Promise<ResponseTeamDto> {
         return this.teamService.update(id, dto);
     }
 
     @Post('/:id/tag')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, TeamAdminGuard)
     addTag(@Param('id') id: number,
            @Body() dto: CreateTagDto): Promise<{ message: string }> {
         return this.teamService.addTag(id, dto);
     }
 
     @Delete('/:id/tag')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, TeamAdminGuard)
     deleteTag(@Param('id') id: number,
               @Body() dto: CreateTagDto): Promise<{ message: string }> {
         return this.teamService.deleteTag(id, dto);
@@ -62,7 +63,7 @@ export class TeamController {
 
 
     @Put('/:id/image')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, TeamAdminGuard)
     @UseInterceptors(FileInterceptor('image'))
     updateImage(@Param('id') id: number,
                 @UploadedFile() image): Promise<{message: string}> {
@@ -70,7 +71,7 @@ export class TeamController {
     }
 
     @Delete('/:id/image')
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(JwtAuthGuard, TeamAdminGuard)
     deleteImage(@Param('id') id: number): Promise<{message: string}> {
         return this.teamService.deleteImage(id);
     }

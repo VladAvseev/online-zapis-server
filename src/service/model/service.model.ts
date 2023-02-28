@@ -20,7 +20,7 @@ export class ServiceModel extends Model<ServiceModel, ServiceCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     title: string;
 
-    @Column({type: DataType.STRING})
+    @Column({type: DataType.TEXT})
     description: string;
 
     @Column({type: DataType.STRING, allowNull: false})
