@@ -14,6 +14,7 @@ import {RegistrationUserDto} from "../auth/dto/registration-user.dto";
 import {TeamModel} from "../team/model/team.model";
 import {TeamService} from "../team/team.service";
 import {log} from "util";
+import {CreateUserDto} from "./dto/create-user.dto";
 
 @Injectable()
 export class UserService {
@@ -104,7 +105,7 @@ export class UserService {
         return {message: 'success'}
     }
 
-    async create(dto: RegistrationUserDto): Promise<ResponseUserDto> {
+    async create(dto: CreateUserDto): Promise<UserModel> {
         const user: UserModel = await this.userRepository.create(dto);
         const role: RoleModel = await this.roleService.getByValue("CLIENT");
         const city: CityModel = await this.cityService.getById(dto.city_id);
@@ -113,7 +114,7 @@ export class UserService {
         user.city = city;
         user.roles = [role];
         user.teams = [];
-        return new ResponseUserDto(user);
+        return user;
     }
 
     async getAll(): Promise<ResponseUserDto[]> {

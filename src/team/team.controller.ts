@@ -66,7 +66,7 @@ export class TeamController {
     @UseGuards(JwtAuthGuard, TeamAdminGuard)
     @UseInterceptors(FileInterceptor('image'))
     updateImage(@Param('id') id: number,
-                @UploadedFile() image): Promise<{message: string}> {
+                @UploadedFile() image): Promise<string> {
         return this.teamService.updateImage(id, image);
     }
 

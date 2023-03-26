@@ -26,8 +26,11 @@ import {TicketModel} from "./ticket/model/ticket.model";
 import {UserTeamModel} from "./team/model/user-team.model";
 import { FileModule } from './file/file.module';
 import {ServeStaticModule} from "@nestjs/serve-static";
-import { EmailModule } from './email/email.module';
+import { MailModule } from './mail/mail.module';
 import * as path from "path";
+import {MailerModule} from "@nestjs-modules/mailer";
+import {PugAdapter} from "@nestjs-modules/mailer/dist/adapters/pug.adapter";
+import * as process from "process";
 
 @Module({
   imports: [
@@ -73,7 +76,7 @@ import * as path from "path";
       ServiceModule,
       TicketModule,
       FileModule,
-      EmailModule,
+      MailModule,
   ],
 })
 export class AppModule {}

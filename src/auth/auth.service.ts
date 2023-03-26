@@ -8,12 +8,15 @@ import {TokenService} from "../token/token.service";
 import {ResponseUserTokensDto} from "./dto/response-user-tokens.dto";
 import {UserModel} from "../user/model/user.model";
 import {RegistrationUserDto} from "./dto/registration-user.dto";
+import { v4 as uuidv4 } from 'uuid';
+import {MailService} from "../mail/mail.service";
 
 @Injectable()
 export class AuthService {
 
     constructor(private userService: UserService,
-                private tokenService: TokenService) {}
+                private tokenService: TokenService,
+                private mailService: MailService) {}
 
     async login(dto: LoginUserDto): Promise<ResponseUserTokensDto> {
         const user: ResponseUserDto = await this.validateUser(dto);
@@ -35,7 +38,7 @@ export class AuthService {
         }
 
         if (candidate) {
-            throw new HttpException({message: 'Пользователь с таким email уже существует'}, HttpStatus.BAD_REQUEST);
+            throw new HttpException({message: 'Пользователь с таким mail уже существует'}, HttpStatus.BAD_REQUEST);
         }
 
         try {
@@ -47,7 +50,10 @@ export class AuthService {
         }
 
         const hashPassword = await bcrypt.hash(dto.password, 5);
-        const user = await this.userService.create({...dto, password: hashPassword});
+        const link: string = uuidv4();
+
+        const user: UserModel = await this.userService.create({...dto, password: hashPassword, link});
+        await this.mailService.sendActivationLink(user.email, user.link);
 
         const tokens: TokensDto = this.tokenService.generateTokens(user);
         await this.tokenService.saveToken({user_id: user.id, refresh_token: tokens.refreshToken});
@@ -62,7 +68,7 @@ export class AuthService {
     private async validateUser(dto: LoginUserDto): Promise<ResponseUserDto> {
         const user: UserModel = await this.userService.getByEmail(dto.email);
         if (!user) {
-            throw new HttpException({message: 'Пользователь с таким email не найден'}, HttpStatus.BAD_REQUEST)
+            throw new HttpException({message: 'Пользователь с таким mail не найден'}, HttpStatus.BAD_REQUEST)
         }
         const passwordEquals = await bcrypt.compare(dto.password, user.password);
         if (passwordEquals) {

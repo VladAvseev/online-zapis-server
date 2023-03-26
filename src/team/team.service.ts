@@ -109,11 +109,11 @@ export class TeamService {
     }
 
     // PUT update image
-    async updateImage(id: number, image: any): Promise<{message: string}> {
+    async updateImage(id: number, image: any): Promise<string> {
         const team: TeamModel = await this.getModelById(id);
         const fileName: string = await this.fileService.createFile(image, team.image);
         await this.teamRepository.update({image: fileName}, {where: {id}});
-        return {message: 'success'};
+        return fileName;
     }
 
     // DELETE delete image

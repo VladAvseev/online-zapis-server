@@ -24,6 +24,7 @@ interface UserCreationAttrs {
     phone: string;
     password: string;
     city_id: number;
+    link: string;
 }
 
 @Table({tableName: 'user'})
@@ -42,6 +43,12 @@ export class UserModel extends Model<UserModel, UserCreationAttrs> {
 
     @Column({type: DataType.STRING, allowNull: false})
     password: string;
+
+    @Column({type: DataType.STRING, allowNull: false, unique: true})
+    link: string;
+
+    @Column({type: DataType.BOOLEAN, allowNull: false, defaultValue: false})
+    is_activated: boolean;
 
     // USER ONE-TO-ONE TOKEN
     @HasOne(() => TokenModel)
