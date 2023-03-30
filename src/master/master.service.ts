@@ -15,18 +15,18 @@ export class MasterService {
     }
 
     // PUT update image
-    async update(id: number, dto: CreateMasterDto, image: any): Promise<ResponseMasterDto> {
-        const master: MasterModel = await this.masterRepository.findByPk(id);
-        const fileName: string = await this.fileService.createFile(image, master.image);
-        await this.masterRepository.update({...dto, image: fileName}, {where: {id}});
-        const updatedMaster: MasterModel = await this.masterRepository.findByPk(id);
-        return updatedMaster;
-    }
+    // async update(id: number, dto: CreateMasterDto, image: any): Promise<ResponseMasterDto> {
+    //     const master: MasterModel = await this.masterRepository.findByPk(id);
+    //     const fileName: string = await this.fileService.create(image, master.image);
+    //     await this.masterRepository.update({...dto, image: fileName}, {where: {id}});
+    //     const updatedMaster: MasterModel = await this.masterRepository.findByPk(id);
+    //     return updatedMaster;
+    // }
 
     // DELETE delete image
     async deleteImage(id: number): Promise<{message: string}> {
         const master: MasterModel = await this.getModelById(id);
-        await this.fileService.deleteFile(master.image);
+        await this.fileService.delete(master.image);
         await master.update({image: null});
         return {message: 'success'};
     }

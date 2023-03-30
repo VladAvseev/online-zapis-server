@@ -3,7 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import {UserModule} from "../user/user.module";
 import {TokenModule} from "../token/token.module";
-import {MailModule} from "../mail/mail.module";
+import {FileModule} from "../file/file.module";
 
 @Module({
     controllers: [AuthController],
@@ -11,7 +11,7 @@ import {MailModule} from "../mail/mail.module";
     imports: [
         forwardRef(() => UserModule),
         TokenModule,
-        MailModule,
+        FileModule
     ],
     exports: [AuthModule]
 })

@@ -9,14 +9,12 @@ import {ResponseUserTokensDto} from "./dto/response-user-tokens.dto";
 import {UserModel} from "../user/model/user.model";
 import {RegistrationUserDto} from "./dto/registration-user.dto";
 import { v4 as uuidv4 } from 'uuid';
-import {MailService} from "../mail/mail.service";
 
 @Injectable()
 export class AuthService {
 
     constructor(private userService: UserService,
-                private tokenService: TokenService,
-                private mailService: MailService) {}
+                private tokenService: TokenService) {}
 
     async login(dto: LoginUserDto): Promise<ResponseUserTokensDto> {
         const user: ResponseUserDto = await this.validateUser(dto);
@@ -53,7 +51,6 @@ export class AuthService {
         const link: string = uuidv4();
 
         const user: UserModel = await this.userService.create({...dto, password: hashPassword, link});
-        await this.mailService.sendActivationLink(user.email, user.link);
 
         const tokens: TokensDto = this.tokenService.generateTokens(user);
         await this.tokenService.saveToken({user_id: user.id, refresh_token: tokens.refreshToken});

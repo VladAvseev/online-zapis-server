@@ -15,14 +15,14 @@ export class MasterController {
         return this.masterService.invite(email)
     }
 
-    @Put(':id')
-    @UseGuards(JwtAuthGuard)
-    @UseInterceptors(FileInterceptor('image'))
-    updateMaster(@Param('id') id: number,
-                 @Body() dto: CreateMasterDto,
-                 @UploadedFile() image): Promise<ResponseMasterDto> {
-        return this.masterService.update(id, dto, image);
-    }
+    // @Put(':id')
+    // @UseGuards(JwtAuthGuard)
+    // @UseInterceptors(FileInterceptor('image'))
+    // updateMaster(@Param('id') id: number,
+    //              @Body() dto: CreateMasterDto,
+    //              @UploadedFile() image): Promise<ResponseMasterDto> {
+    //     return this.masterService.update(id, dto, image);
+    // }
 
     @Delete('/:id/image')
     @UseGuards(JwtAuthGuard)
