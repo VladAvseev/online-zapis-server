@@ -25,21 +25,15 @@ import {MasterServiceModel} from "./service/model/master-service.model";
 import {TicketModel} from "./ticket/model/ticket.model";
 import {UserTeamModel} from "./team/model/user-team.model";
 import { FileModule } from './file/file.module';
-import {ServeStaticModule} from "@nestjs/serve-static";
-import { MailModule } from './mail/mail.module';
 import * as path from "path";
-import {MailerModule} from "@nestjs-modules/mailer";
-import {PugAdapter} from "@nestjs-modules/mailer/dist/adapters/pug.adapter";
 import * as process from "process";
+import {FileModel} from "./file/model/file.model";
 
 @Module({
   imports: [
       ConfigModule.forRoot({
         envFilePath: '.env',
         isGlobal: true,
-      }),
-      ServeStaticModule.forRoot({
-          rootPath: path.resolve(__dirname, 'static'),
       }),
       SequelizeModule.forRoot({
           dialect: 'postgres',
@@ -61,7 +55,8 @@ import * as process from "process";
               ServiceModel,
               MasterServiceModel,
               TicketModel,
-              UserTeamModel
+              UserTeamModel,
+              FileModel,
           ],
           autoLoadModels: true,
       }),
@@ -76,7 +71,6 @@ import * as process from "process";
       ServiceModule,
       TicketModule,
       FileModule,
-      MailModule,
   ],
 })
 export class AppModule {}

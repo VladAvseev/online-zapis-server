@@ -3,7 +3,7 @@ import {
     Controller,
     Delete,
     Get,
-    Param,
+    Param, ParseEnumPipe,
     Post,
     Put,
     UploadedFile,
@@ -45,6 +45,11 @@ export class TeamController {
     updateTeam(@Param('id') id: number,
                @Body() dto: UpdateTeamDto): Promise<ResponseTeamDto> {
         return this.teamService.update(id, dto);
+    }
+
+    @Delete(':id')
+    delete(@Param('id') id: number): Promise<{message:string}> {
+        return this.teamService.delete(id);
     }
 
     @Post('/:id/tag')

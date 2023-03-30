@@ -1,35 +1,29 @@
-import {HttpException, HttpStatus, Injectable} from '@nestjs/common';
-import * as path from 'path';
-import * as fs from 'fs';
+import {Injectable} from '@nestjs/common';
 import * as uuid from 'uuid';
+import {InjectModel} from "@nestjs/sequelize";
+import {FileModel} from "./model/file.model";
+import {CreateFileDto} from "./dto/create-file.dto";
 
 @Injectable()
 export class FileService {
+    constructor(@InjectModel(FileModel) private fileRepository: typeof FileModel) {}
 
-    async createFile(file, fileName): Promise<string> {
-        try {
-            if (!fileName) {
-                fileName = uuid.v4() + '.jpg';
-            }
-            const filePath = path.resolve(__dirname, '..', 'static');
-            if (!fs.existsSync(filePath)) {
-                fs.mkdirSync(filePath, {recursive: true});
-            }
-            fs.writeFileSync(path.join(filePath, fileName), file.buffer);
-            return fileName;
-        } catch (e) {
-            throw new HttpException({message: 'Произошла ошибка при записи файла'}, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    async get(filename: string): Promise<string> {
+        const file: FileModel = await this.fileRepository.findOne({where: {filename}});
+        return file.file;
     }
 
-    async deleteFile(filename): Promise<void> {
-        try {
-            const filepath = path.resolve(__dirname, '..', 'static', filename);
-            fs.unlink(filepath, (err) => {
-                console.log(err);
-            });
-        }catch (e) {
-            throw new HttpException({message: 'Произошла ошибка при удалении файла'}, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    async create(file: any): Promise<string> {
+        const filename: string = uuid.v4();
+        await this.fileRepository.create({filename, file});
+        return filename;
+    }
+
+    async update(dto: CreateFileDto): Promise<void> {
+        await this.fileRepository.update({file: dto.file}, {where: {filename: dto.filename}});
+    }
+
+    async delete(filename: string): Promise<void> {
+        await this.fileRepository.destroy({where: {filename}});
     }
 }

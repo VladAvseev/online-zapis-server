@@ -12,6 +12,8 @@ import {MasterService} from "../master/master.service";
 import {ResponseTeamDto} from "./dto/response-team.dto";
 import {FileService} from "../file/file.service";
 import {CreateTagDto} from "../tag/dto/create-tag.dto";
+import {filter} from "rxjs";
+import * as process from "process";
 
 @Injectable()
 export class TeamService {
@@ -88,6 +90,13 @@ export class TeamService {
         return new ResponseTeamDto(updatedTeam);
     }
 
+    async delete(id: number): Promise<{message: string}> {
+        const team: TeamModel = await this.getModelById(id);
+        await this.fileService.delete(team.image);
+        await this.teamRepository.destroy({where: {id}});
+        return {message: 'success'};
+    }
+
     // POST add tag
     async addTag(id: number, dto: CreateTagDto): Promise<{ message: string }> {
         const [tag]: TagModel[] = await this.tagService.addTags([dto]);
@@ -111,15 +120,20 @@ export class TeamService {
     // PUT update image
     async updateImage(id: number, image: any): Promise<string> {
         const team: TeamModel = await this.getModelById(id);
-        const fileName: string = await this.fileService.createFile(image, team.image);
-        await this.teamRepository.update({image: fileName}, {where: {id}});
-        return fileName;
+        if (team.image) {
+            await this.fileService.update({filename: team.image, file: image});
+            return team.image;
+        } else {
+            const fileName: string = await this.fileService.create(image);
+            await this.teamRepository.update({image: fileName}, {where: {id}});
+            return fileName;
+        }
     }
 
     // DELETE delete image
     async deleteImage(id: number): Promise<{message: string}> {
         const team: TeamModel = await this.getModelById(id);
-        await this.fileService.deleteFile(team.image);
+        await this.fileService.delete(team.image);
         await team.update({image: null});
         return {message: 'success'};
     }
