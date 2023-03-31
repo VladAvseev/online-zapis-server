@@ -26,14 +26,14 @@ export class TagService {
         return tag;
     }
 
-    async addTags(dto: CreateTagDto[]): Promise<TagModel[]> {
+    async addTags(dto: string[]): Promise<TagModel[]> {
         const tags: TagModel[] = [];
         for await (const dtoTag of dto) {
-            let tag: TagModel = await this.getByValue(dtoTag.value);
+            let tag: TagModel = await this.getByValue(dtoTag);
             if (tag) {
                 tags.push(tag);
             } else {
-                tag = await this.create(dtoTag);
+                tag = await this.create({value: dtoTag});
                 tags.push(tag);
             }
         }

@@ -7,5 +7,5 @@ export class CreateTeamDto {
     readonly email: string;
     readonly address: string;
     readonly city_id: number;
-    readonly tags: CreateTagDto[];
+    readonly tags: string[];
 }

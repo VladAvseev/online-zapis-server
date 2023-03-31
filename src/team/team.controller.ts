@@ -48,6 +48,7 @@ export class TeamController {
     }
 
     @Delete(':id')
+    @UseGuards(JwtAuthGuard, TeamAdminGuard)
     delete(@Param('id') id: number): Promise<{message:string}> {
         return this.teamService.delete(id);
     }
@@ -56,7 +57,7 @@ export class TeamController {
     @UseGuards(JwtAuthGuard, TeamAdminGuard)
     addTag(@Param('id') id: number,
            @Body() dto: CreateTagDto): Promise<{ message: string }> {
-        return this.teamService.addTag(id, dto);
+        return this.teamService.addTag(id, dto.value);
     }
 
     @Delete('/:id/tag')

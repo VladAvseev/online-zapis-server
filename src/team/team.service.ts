@@ -70,10 +70,13 @@ export class TeamService {
             throw new HttpException({message: 'Не все обязательные поля заполнены'}, HttpStatus.BAD_REQUEST);
         }
 
+
         const team: TeamModel = await this.teamRepository.create(dto);
+
 
         const tags: TagModel[] = await this.tagService.addTags(dto.tags);
         await team.$set('tags', tags);
+
 
         await team.$set('users', [admin]);
 
@@ -98,10 +101,10 @@ export class TeamService {
     }
 
     // POST add tag
-    async addTag(id: number, dto: CreateTagDto): Promise<{ message: string }> {
+    async addTag(id: number, dto: string): Promise<{ message: string }> {
         const [tag]: TagModel[] = await this.tagService.addTags([dto]);
         const team: TeamModel = await this.getModelById(id);
-        if (!team.tags.filter((tag) => tag.value === dto.value).length) {
+        if (!team.tags.filter((tag) => tag.value === dto).length) {
             await team.$set('tags', [...team.tags, tag]);
         } else {
             throw new HttpException({message: 'Такой тег уже присутствует'}, HttpStatus.BAD_REQUEST);
@@ -121,7 +124,7 @@ export class TeamService {
     async updateImage(id: number, image: any): Promise<string> {
         const team: TeamModel = await this.getModelById(id);
         if (team.image) {
-            await this.fileService.update({filename: team.image, file: image});
+            await this.fileService.update({filename: team.image, file: image})
             return team.image;
         } else {
             const fileName: string = await this.fileService.create(image);

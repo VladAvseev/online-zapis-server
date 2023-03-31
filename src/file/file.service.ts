@@ -10,7 +10,8 @@ export class FileService {
 
     async get(filename: string): Promise<string> {
         const file: FileModel = await this.fileRepository.findOne({where: {filename}});
-        return file.file;
+        const src = 'data:image/jpeg;base64, '+file.file.toString('base64');
+        return src;
     }
 
     async create(file: any): Promise<string> {
