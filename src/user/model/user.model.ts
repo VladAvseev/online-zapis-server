@@ -24,7 +24,6 @@ interface UserCreationAttrs {
     phone: string;
     password: string;
     city_id: number;
-    link: string;
 }
 
 @Table({tableName: 'user'})
@@ -44,11 +43,10 @@ export class UserModel extends Model<UserModel, UserCreationAttrs> {
     @Column({type: DataType.STRING, allowNull: false})
     password: string;
 
-    @Column({type: DataType.STRING, allowNull: false, unique: true})
-    link: string;
-
-    @Column({type: DataType.BOOLEAN, allowNull: false, defaultValue: false})
-    is_activated: boolean;
+    // USER MANY-TO-ONE CITY
+    @ForeignKey(() => CityModel)
+    @Column({type: DataType.INTEGER, allowNull: false})
+    city_id: number;
 
     // USER ONE-TO-ONE TOKEN
     @HasOne(() => TokenModel)
@@ -57,18 +55,6 @@ export class UserModel extends Model<UserModel, UserCreationAttrs> {
     // USER ONE-TO-MANY USER-ROLE
     @BelongsToMany(() => RoleModel, () => UserRoleModel)
     roles: RoleModel[];
-
-    // USER MANY-TO-ONE CITY
-    @ForeignKey(() => CityModel)
-    @Column({type: DataType.INTEGER, allowNull: false})
-    city_id: number;
-    @BelongsTo(() => CityModel)
-    city: CityModel;
-
-    // USER MANY-TO-ONE TEAM
-    @ForeignKey(() => TeamModel)
-    @Column({type: DataType.INTEGER, allowNull: true, onDelete: 'SET NULL'})
-    team_id: number;
 
     // USER ONE-TO-ONE MASTER
     @HasOne(() => MasterModel)

@@ -59,10 +59,10 @@ export class TeamService {
     }
 
     // POST: create team
-    async create(dto: CreateTeamDto): Promise<{ message: string }> {
-        const admin: UserModel = await this.userService.getModelById(dto.admin_id);
+    async create(dto: CreateTeamDto): Promise<ResponseTeamDto> {
+        const master: MasterModel = await this.masterService.getModelById(dto.admin_id);
 
-        if (admin.team_id) {
+        if (master) {
             throw new HttpException({message: 'Вы уже состоите в команде'}, HttpStatus.BAD_REQUEST);
         }
 
@@ -70,20 +70,20 @@ export class TeamService {
             throw new HttpException({message: 'Не все обязательные поля заполнены'}, HttpStatus.BAD_REQUEST);
         }
 
-
         const team: TeamModel = await this.teamRepository.create(dto);
 
 
         const tags: TagModel[] = await this.tagService.addTags(dto.tags);
         await team.$set('tags', tags);
+        team.tags = tags;
 
+        const admin: MasterModel = await this.masterService.create(dto.admin_id);
+        await team.$set('masters', [admin]);
 
-        await team.$set('users', [admin]);
+        const user: UserModel = await this.userService.getModelById(admin.id);
+        await user.$set('master', admin);
 
-        const master: MasterModel = await this.masterService.create(dto.admin_id);
-        await admin.$set('master', master);
-
-        return {message: 'success'};
+        return new ResponseTeamDto(team);
     }
 
     // PUT update team info
@@ -93,12 +93,12 @@ export class TeamService {
         return new ResponseTeamDto(updatedTeam);
     }
 
-    async delete(id: number): Promise<{message: string}> {
-        const team: TeamModel = await this.getModelById(id);
-        await this.fileService.delete(team.image);
-        await this.teamRepository.destroy({where: {id}});
-        return {message: 'success'};
-    }
+    // async delete(id: number): Promise<{message: string}> {
+    //     const team: TeamModel = await this.getModelById(id);
+    //     await this.fileService.delete(team.image);
+    //     await this.teamRepository.destroy({where: {id}});
+    //     return {message: 'success'};
+    // }
 
     // POST add tag
     async addTag(id: number, dto: string): Promise<{ message: string }> {
@@ -121,25 +121,25 @@ export class TeamService {
     }
 
     // PUT update image
-    async updateImage(id: number, image: any): Promise<string> {
-        const team: TeamModel = await this.getModelById(id);
-        if (team.image) {
-            await this.fileService.update({filename: team.image, file: image})
-            return team.image;
-        } else {
-            const fileName: string = await this.fileService.create(image);
-            await this.teamRepository.update({image: fileName}, {where: {id}});
-            return fileName;
-        }
-    }
+    // async updateImage(id: number, image: any): Promise<string> {
+    //     const team: TeamModel = await this.getModelById(id);
+    //     if (team.image) {
+    //         await this.fileService.update({filename: team.image, file: image})
+    //         return team.image;
+    //     } else {
+    //         const fileName: string = await this.fileService.create(image);
+    //         await this.teamRepository.update({image: fileName}, {where: {id}});
+    //         return fileName;
+    //     }
+    // }
 
     // DELETE delete image
-    async deleteImage(id: number): Promise<{message: string}> {
-        const team: TeamModel = await this.getModelById(id);
-        await this.fileService.delete(team.image);
-        await team.update({image: null});
-        return {message: 'success'};
-    }
+    // async deleteImage(id: number): Promise<{message: string}> {
+    //     const team: TeamModel = await this.getModelById(id);
+    //     await this.fileService.delete(team.image);
+    //     await team.update({image: null});
+    //     return {message: 'success'};
+    // }
 
     async getModelById(id: number): Promise<TeamModel> {
         const team: TeamModel = await this.teamRepository.findByPk(id, {include: {all: true}});

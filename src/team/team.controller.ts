@@ -3,7 +3,7 @@ import {
     Controller,
     Delete,
     Get,
-    Param, ParseEnumPipe,
+    Param,
     Post,
     Put,
     UploadedFile,
@@ -11,7 +11,6 @@ import {
     UseInterceptors
 } from '@nestjs/common';
 import {TeamService} from "./team.service";
-import {TeamModel} from "./model/team.model";
 import {CreateTeamDto} from "./dto/create-team.dto";
 import {JwtAuthGuard} from "../auth/guard/jwt-auth.guard";
 import {UpdateTeamDto} from "./dto/update-team.dto";
@@ -36,7 +35,7 @@ export class TeamController {
 
     @Post()
     @UseGuards(JwtAuthGuard)
-    createTeam(@Body() dto: CreateTeamDto): Promise<{ message: string }> {
+    createTeam(@Body() dto: CreateTeamDto): Promise<ResponseTeamDto> {
         return this.teamService.create(dto);
     }
 
@@ -47,11 +46,11 @@ export class TeamController {
         return this.teamService.update(id, dto);
     }
 
-    @Delete(':id')
-    @UseGuards(JwtAuthGuard, TeamAdminGuard)
-    delete(@Param('id') id: number): Promise<{message:string}> {
-        return this.teamService.delete(id);
-    }
+    // @Delete(':id')
+    // @UseGuards(JwtAuthGuard, TeamAdminGuard)
+    // delete(@Param('id') id: number): Promise<{message:string}> {
+    //     return this.teamService.delete(id);
+    // }
 
     @Post('/:id/tag')
     @UseGuards(JwtAuthGuard, TeamAdminGuard)
@@ -67,18 +66,17 @@ export class TeamController {
         return this.teamService.deleteTag(id, dto);
     }
 
-
-    @Put('/:id/image')
-    @UseGuards(JwtAuthGuard, TeamAdminGuard)
-    @UseInterceptors(FileInterceptor('image'))
-    updateImage(@Param('id') id: number,
-                @UploadedFile() image): Promise<string> {
-        return this.teamService.updateImage(id, image);
-    }
-
-    @Delete('/:id/image')
-    @UseGuards(JwtAuthGuard, TeamAdminGuard)
-    deleteImage(@Param('id') id: number): Promise<{message: string}> {
-        return this.teamService.deleteImage(id);
-    }
+    // @Put('/:id/image')
+    // @UseGuards(JwtAuthGuard, TeamAdminGuard)
+    // @UseInterceptors(FileInterceptor('image'))
+    // updateImage(@Param('id') id: number,
+    //             @UploadedFile() image): Promise<string> {
+    //     return this.teamService.updateImage(id, image);
+    // }
+    //
+    // @Delete('/:id/image')
+    // @UseGuards(JwtAuthGuard, TeamAdminGuard)
+    // deleteImage(@Param('id') id: number): Promise<{message: string}> {
+    //     return this.teamService.deleteImage(id);
+    // }
 }

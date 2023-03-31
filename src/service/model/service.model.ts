@@ -5,10 +5,10 @@ import {TeamModel} from "../../team/model/team.model";
 
 interface ServiceCreationAttrs {
     title: string;
-    description: string;
-    currency: string;
     price: number;
+    currency: string;
     duration: number;
+    description: string;
     team_id: number;
 }
 

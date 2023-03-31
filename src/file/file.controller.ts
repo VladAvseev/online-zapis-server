@@ -5,8 +5,8 @@ import {FileService} from "./file.service";
 export class FileController {
     constructor(private fileService: FileService) {}
 
-    @Get(':filename')
-    get(@Param('filename') filename: string): Promise<string> {
-        return this.fileService.get(filename);
-    }
+    // @Get(':filename')
+    // get(@Param('filename') filename: string): Promise<string> {
+    //     return this.fileService.get(filename);
+    // }
 }

@@ -24,12 +24,12 @@ export class MasterService {
     // }
 
     // DELETE delete image
-    async deleteImage(id: number): Promise<{message: string}> {
-        const master: MasterModel = await this.getModelById(id);
-        await this.fileService.delete(master.image);
-        await master.update({image: null});
-        return {message: 'success'};
-    }
+    // async deleteImage(id: number): Promise<{message: string}> {
+    //     const master: MasterModel = await this.getModelById(id);
+    //     await this.fileService.delete(master.image);
+    //     await master.update({image: null});
+    //     return {message: 'success'};
+    // }
 
     async create(userId: number): Promise<MasterModel> {
         const master: MasterModel = await this.masterRepository.create({id: userId});

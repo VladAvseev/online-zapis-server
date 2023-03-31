@@ -24,9 +24,9 @@ export class MasterController {
     //     return this.masterService.update(id, dto, image);
     // }
 
-    @Delete('/:id/image')
-    @UseGuards(JwtAuthGuard)
-    deleteImage(@Param('id') id: number): Promise<{message: string}> {
-        return this.masterService.deleteImage(id);
-    }
+    // @Delete('/:id/image')
+    // @UseGuards(JwtAuthGuard)
+    // deleteImage(@Param('id') id: number): Promise<{message: string}> {
+    //     return this.masterService.deleteImage(id);
+    // }
 }

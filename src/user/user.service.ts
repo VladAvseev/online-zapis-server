@@ -47,7 +47,7 @@ export class UserService {
                 throw new HttpException({massage: "Пользователь с таким телефоном уже существует"}, HttpStatus.BAD_REQUEST);
             }
         }
-        if (dto.city_id !== candidate.city.id) {
+        if (dto.city_id !== candidate.city_id) {
             await this.cityService.getById(dto.city_id);
         }
         await this.userRepository.update(dto, {where: {id}});
@@ -108,10 +108,7 @@ export class UserService {
     async create(dto: CreateUserDto): Promise<UserModel> {
         const user: UserModel = await this.userRepository.create(dto);
         const role: RoleModel = await this.roleService.getByValue("CLIENT");
-        const city: CityModel = await this.cityService.getById(dto.city_id);
         await user.$set('roles', [role.id]);
-        await user.$set('city', city);
-        user.city = city;
         user.roles = [role];
         user.teams = [];
         return user;

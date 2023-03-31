@@ -14,12 +14,13 @@ import {TeamTagModel} from "../../tag/model/team-tag.model";
 import {UserModel} from "../../user/model/user.model";
 import {ServiceModel} from "../../service/model/service.model";
 import {UserTeamModel} from "./user-team.model";
+import {MasterModel} from "../../master/model/master.model";
 
 interface TeamCreationAttrs {
     admin_id: number;
     title: string;
-    email: string;
     phone: string;
+    email: string;
     address: string;
     city_id: number;
 }
@@ -45,9 +46,6 @@ export class TeamModel extends Model<TeamModel, TeamCreationAttrs> {
     description: string;
 
     @Column({type: DataType.STRING})
-    image: string;
-
-    @Column({type: DataType.STRING})
     address: string;
 
     // TEAM MANY-TO-ONE CITY
@@ -62,8 +60,8 @@ export class TeamModel extends Model<TeamModel, TeamCreationAttrs> {
     tags: TagModel[];
 
     // TEAM ONE-TO-MANY USER
-    @HasMany(() => UserModel)
-    users: UserModel[];
+    @HasMany(() => MasterModel)
+    masters: MasterModel[];
 
     // TEAM ONE-TO-MANY SERVICE
     @HasMany(() => ServiceModel)

@@ -3,7 +3,8 @@ import {UserModel} from "../../user/model/user.model";
 import {MasterServiceModel} from "../../service/model/master-service.model";
 
 interface TicketCreationAttrs {
-    time: Date;
+    date: string;
+    time: string;
     comment: string;
 }
 
@@ -13,7 +14,10 @@ export class TicketModel extends Model<TicketModel, TicketCreationAttrs> {
     id: number;
 
     @Column({type: DataType.DATE, allowNull: false})
-    time: Date;
+    date: string;
+
+    @Column({type: DataType.TIME, allowNull: false})
+    time: string;
 
     @Column({type: DataType.STRING})
     comment: string;

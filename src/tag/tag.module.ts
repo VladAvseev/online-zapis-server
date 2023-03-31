@@ -4,14 +4,13 @@ import { TagService } from './tag.service';
 import {SequelizeModule} from "@nestjs/sequelize";
 import {TokenModule} from "../token/token.module";
 import {TagModel} from "./model/tag.model";
-import {TeamModel} from "../team/model/team.model";
 import {TeamTagModel} from "./model/team-tag.model";
 
 @Module({
   controllers: [TagController],
   providers: [TagService],
   imports: [
-    SequelizeModule.forFeature([TagModel, TeamModel, TeamTagModel]),
+    SequelizeModule.forFeature([TagModel, TeamTagModel]),
     TokenModule,
   ],
   exports: [TagService]

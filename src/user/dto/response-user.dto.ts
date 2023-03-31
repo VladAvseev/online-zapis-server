@@ -9,8 +9,8 @@ export class ResponseUserDto {
     readonly name: string;
     readonly email: string;
     readonly phone: string;
-    readonly team_id?: number;
-    readonly city: CityModel;
+
+    readonly city_id: number;
     readonly roles: ResponseRoleDto[];
     readonly master: ResponseMasterDto;
     readonly teams: ResponseUserTeamDto[];
@@ -20,8 +20,7 @@ export class ResponseUserDto {
         this.name = user.name;
         this.email = user.email;
         this.phone = user.phone;
-        this.team_id = user.team_id || null;
-        this.city = user.city;
+        this.city_id = user.city_id;
         this.roles = user.roles.map(role => new ResponseRoleDto(role));
         this.master = new ResponseMasterDto(user.master);
         this.teams = user.teams.map(team => new ResponseUserTeamDto(team));
