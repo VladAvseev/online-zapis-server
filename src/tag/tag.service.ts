@@ -21,8 +21,8 @@ export class TagService {
         return tag;
     }
 
-    async create(dto: CreateTagDto): Promise<TagModel> {
-        const tag: TagModel = await this.tagRepository.create(dto);
+    async create(value: string): Promise<TagModel> {
+        const tag: TagModel = await this.tagRepository.create({value});
         return tag;
     }
 
@@ -33,7 +33,7 @@ export class TagService {
             if (tag) {
                 tags.push(tag);
             } else {
-                tag = await this.create({value: dtoTag});
+                tag = await this.create(dtoTag);
                 tags.push(tag);
             }
         }

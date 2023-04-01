@@ -14,6 +14,9 @@ import {FileService} from "../file/file.service";
 import {CreateTagDto} from "../tag/dto/create-tag.dto";
 import {filter} from "rxjs";
 import * as process from "process";
+import {ResponseUserTeamDto} from "./dto/response-user-team.dto";
+import {ResponseUserDto} from "../user/dto/response-user.dto";
+import {ResponseTagDto} from "../tag/dto/response-tag.dto";
 
 @Injectable()
 export class TeamService {
@@ -25,15 +28,15 @@ export class TeamService {
                 private fileService: FileService) {}
 
     // POST: get all teams in current town (search)
-    async getAll(dto: {cityId: number, search: string}): Promise<ResponseTeamDto[]> {
+    async getAll(dto: {city_id: number, search: string}): Promise<ResponseUserTeamDto[]> {
         const teams: TeamModel[] = await this.teamRepository.findAll({include: {all: true}});
         const filterTeams: TeamModel[] = teams.filter(team => {
-            if (!dto.cityId || team.city.id === dto.cityId) {
+            if (!dto.city_id || team.city.id === +dto.city_id) {
+                if (!dto.search) {
+                    return true;
+                }
                 let isSearched = false;
                 team.tags.forEach(tag => {
-                    if (!dto.search) {
-                        return true;
-                    }
                     dto.search.split(' ').forEach((word) => {
                         if (tag.value.toLowerCase().includes(word.toLowerCase()) || word.toLowerCase().includes(tag.value.toLowerCase())) {
                             isSearched = true;
@@ -44,7 +47,7 @@ export class TeamService {
             }
             return false;
         })
-        return filterTeams.map(team => new ResponseTeamDto(team));
+        return filterTeams.map(team => new ResponseUserTeamDto(team));
     }
 
     // GET: get team by id
@@ -72,16 +75,11 @@ export class TeamService {
 
         const team: TeamModel = await this.teamRepository.create(dto);
 
-
         const tags: TagModel[] = await this.tagService.addTags(dto.tags);
         await team.$set('tags', tags);
         team.tags = tags;
 
-        const admin: MasterModel = await this.masterService.create(dto.admin_id);
-        await team.$set('masters', [admin]);
-
-        const user: UserModel = await this.userService.getModelById(admin.id);
-        await user.$set('master', admin);
+        await this.masterService.create(dto.admin_id, team.id);
 
         return new ResponseTeamDto(team);
     }
@@ -101,7 +99,7 @@ export class TeamService {
     // }
 
     // POST add tag
-    async addTag(id: number, dto: string): Promise<{ message: string }> {
+    async addTag(id: number, dto: string): Promise<ResponseTagDto[]> {
         const [tag]: TagModel[] = await this.tagService.addTags([dto]);
         const team: TeamModel = await this.getModelById(id);
         if (!team.tags.filter((tag) => tag.value === dto).length) {
@@ -109,15 +107,18 @@ export class TeamService {
         } else {
             throw new HttpException({message: 'Такой тег уже присутствует'}, HttpStatus.BAD_REQUEST);
         }
-        return {message: 'success'};
+        return [...team.tags, tag].map(tag => new ResponseTagDto(tag));
     }
 
     // DELETE delete tag
-    async deleteTag(id: number, dto: CreateTagDto): Promise<{ message: string }> {
-        const tag: TagModel = await this.tagService.getByValue(dto.value);
+    async deleteTag(id: number, dto: CreateTagDto): Promise<ResponseTagDto[]> {
+        const tagModel: TagModel = await this.tagService.getByValue(dto.value);
+        if (!tagModel) {
+            throw new HttpException({message: 'Такого тега нет'}, HttpStatus.BAD_REQUEST);
+        }
         const team: TeamModel = await this.getModelById(id);
-        await team.$remove('tags', tag);
-        return {message: 'success'};
+        await team.$remove('tags', tagModel);
+        return team.tags.filter(tag => tag.value !== tagModel.value).map(tag => new ResponseTagDto(tag));
     }
 
     // PUT update image

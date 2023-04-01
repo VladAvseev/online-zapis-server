@@ -1,4 +1,15 @@
-import {Body, Controller, Delete, Param, Post, Put, UploadedFile, UseGuards, UseInterceptors} from '@nestjs/common';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    Put,
+    UploadedFile,
+    UseGuards,
+    UseInterceptors
+} from '@nestjs/common';
 import {MasterService} from "./master.service";
 import {JwtAuthGuard} from "../auth/guard/jwt-auth.guard";
 import {ResponseMasterDto} from "./dto/response-master.dto";
@@ -13,6 +24,11 @@ export class MasterController {
     @UseGuards(JwtAuthGuard)
     inviteMaster(@Body() email: string): Promise<{message: string}> {
         return this.masterService.invite(email)
+    }
+
+    @Get(':id')
+    get(@Param('id') id: number): Promise<ResponseMasterDto> {
+        return this.masterService.get(id)
     }
 
     // @Put(':id')

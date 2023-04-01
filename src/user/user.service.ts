@@ -12,6 +12,7 @@ import * as bcrypt from "bcryptjs";
 import {TeamModel} from "../team/model/team.model";
 import {TeamService} from "../team/team.service";
 import {CreateUserDto} from "./dto/create-user.dto";
+import {ResponseUserTeamDto} from "../team/dto/response-user-team.dto";
 
 @Injectable()
 export class UserService {
@@ -40,6 +41,7 @@ export class UserService {
         if (!user) {
             throw new HttpException('Пользователь с таким id не найден', HttpStatus.BAD_REQUEST);
         }
+
         return new ResponseUserDto(user);
     }
 
@@ -95,9 +97,9 @@ export class UserService {
     }
 
     // POST: add team to user saves
-    async addTeam(teamId: number, dto: ResponseUserDto): Promise<{message: string}> {
-        const user: UserModel = await this.getModelById(dto.id);
-        const team: TeamModel = await this.teamService.getModelById(teamId);
+    async addTeam(user_id: number, team_id: number): Promise<{message: string}> {
+        const user: UserModel = await this.getModelById(user_id);
+        const team: TeamModel = await this.teamService.getModelById(team_id);
         if (user.teams.map(team => team.id).includes(team.id)) {
             throw new HttpException({message: 'Команда уже добавлена в избранное'}, HttpStatus.BAD_REQUEST);
         }

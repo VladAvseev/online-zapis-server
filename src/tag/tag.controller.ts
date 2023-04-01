@@ -23,6 +23,6 @@ export class TagController {
     @Post()
     @UseGuards(JwtAuthGuard)
     createRole(@Body() dto: CreateTagDto): Promise<TagModel> {
-        return this.tagService.create(dto);
+        return this.tagService.create(dto.value);
     }
 }

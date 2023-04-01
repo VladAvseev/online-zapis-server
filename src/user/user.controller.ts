@@ -45,10 +45,11 @@ export class UserController {
         return this.userService.addRole(addRoleDto);
     }
 
-    @Post('/team/:id')
+    @Post(':id/team/:team_id')
     @UseGuards(UserIdAuthGuard)
-    addTeam(@Param('id') teamId: number, @Body() dto: {user: ResponseUserDto}) {
-        return this.userService.addTeam(teamId, dto.user);
+    addTeam(@Param('id') user_id: number,
+            @Param('team_id') team_id: number) {
+        return this.userService.addTeam(user_id, team_id);
     }
 
     @Delete('/team/:id')

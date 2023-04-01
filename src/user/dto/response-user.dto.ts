@@ -12,7 +12,7 @@ export class ResponseUserDto {
 
     readonly city_id: number;
     readonly roles: ResponseRoleDto[];
-    readonly master: ResponseMasterDto;
+    readonly master: ResponseMasterDto | null;
     readonly teams: ResponseUserTeamDto[];
 
     constructor(user: UserModel) {
@@ -22,7 +22,7 @@ export class ResponseUserDto {
         this.phone = user.phone;
         this.city_id = user.city_id;
         this.roles = user.roles.map(role => new ResponseRoleDto(role));
-        this.master = new ResponseMasterDto(user.master);
+        this.master = user.master ? new ResponseMasterDto(user.master) : null;
         this.teams = user.teams.map(team => new ResponseUserTeamDto(team));
     }
 }

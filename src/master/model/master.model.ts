@@ -6,6 +6,7 @@ import {TeamModel} from "../../team/model/team.model";
 
 interface MasterCreationAttrs {
     id: number;
+    team_id: number;
 }
 
 @Table({tableName: 'master', createdAt: false, updatedAt: false})

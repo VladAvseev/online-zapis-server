@@ -5,7 +5,7 @@ import {
     Get,
     Param,
     Post,
-    Put,
+    Put, Query,
     UploadedFile,
     UseGuards,
     UseInterceptors
@@ -18,13 +18,16 @@ import {ResponseTeamDto} from "./dto/response-team.dto";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {CreateTagDto} from "../tag/dto/create-tag.dto";
 import {TeamAdminGuard} from "./guard/team-admin.guard";
+import {ResponseUserTeamDto} from "./dto/response-user-team.dto";
+import {TagModel} from "../tag/model/tag.model";
+import {ResponseTagDto} from "../tag/dto/response-tag.dto";
 
 @Controller('team')
 export class TeamController {
     constructor(private teamService: TeamService) {}
 
-    @Post('/get')
-    getAllTeams(@Body() dto: {cityId: number, search: string}): Promise<ResponseTeamDto[]> {
+    @Get()
+    getAllTeams(@Query() dto: {city_id: number, search: string}): Promise<ResponseUserTeamDto[]> {
         return this.teamService.getAll(dto);
     }
 
@@ -55,14 +58,14 @@ export class TeamController {
     @Post('/:id/tag')
     @UseGuards(JwtAuthGuard, TeamAdminGuard)
     addTag(@Param('id') id: number,
-           @Body() dto: CreateTagDto): Promise<{ message: string }> {
+           @Body() dto: CreateTagDto): Promise<ResponseTagDto[]> {
         return this.teamService.addTag(id, dto.value);
     }
 
     @Delete('/:id/tag')
     @UseGuards(JwtAuthGuard, TeamAdminGuard)
     deleteTag(@Param('id') id: number,
-              @Body() dto: CreateTagDto): Promise<{ message: string }> {
+              @Body() dto: CreateTagDto): Promise<ResponseTagDto[]> {
         return this.teamService.deleteTag(id, dto);
     }
 

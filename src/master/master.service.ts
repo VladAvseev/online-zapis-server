@@ -14,6 +14,16 @@ export class MasterService {
         return {message: 'success'};
     }
 
+    async get(id: number): Promise<ResponseMasterDto> {
+        const master: MasterModel = await this.getModelById(id);
+
+        if (!master) {
+            throw new HttpException({message: 'Мастер не найден'}, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseMasterDto(master);
+    }
+
     // PUT update image
     // async update(id: number, dto: CreateMasterDto, image: any): Promise<ResponseMasterDto> {
     //     const master: MasterModel = await this.masterRepository.findByPk(id);
@@ -31,18 +41,13 @@ export class MasterService {
     //     return {message: 'success'};
     // }
 
-    async create(userId: number): Promise<MasterModel> {
-        const master: MasterModel = await this.masterRepository.create({id: userId});
+    async create(id: number, team_id: number): Promise<MasterModel> {
+        const master: MasterModel = await this.masterRepository.create({id, team_id});
         return master;
     }
 
     async getModelById(id: number): Promise<MasterModel> {
         const master: MasterModel = await this.masterRepository.findByPk(id, {include: {all: true}});
-
-        if (!master) {
-            throw new HttpException({message: 'Мастер с таким id не найден'}, HttpStatus.BAD_REQUEST);
-        }
-
         return master;
     }
 }
