@@ -25,6 +25,10 @@ export class RoleService {
     }
 
     async create(dto: CreateRoleDto): Promise<RoleModel> {
+        const candidate: RoleModel = await this.getByValue(dto.value);
+        if (candidate) {
+            throw new HttpException({message: `Роль ${dto.value} уже существует`}, HttpStatus.BAD_REQUEST);
+        }
         const role: RoleModel = await this.roleRepository.create(dto);
         return role;
     }

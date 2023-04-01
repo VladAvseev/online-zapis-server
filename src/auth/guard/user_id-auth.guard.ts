@@ -3,7 +3,7 @@ import {Observable} from "rxjs";
 import {TokenService} from "../../token/token.service";
 
 @Injectable()
-export class JwtAuthGuard implements CanActivate {
+export class UserIdAuthGuard implements CanActivate {
     constructor(private tokenService: TokenService) {}
 
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
@@ -15,7 +15,7 @@ export class JwtAuthGuard implements CanActivate {
                 throw new UnauthorizedException();
             }
             const user = this.tokenService.validateAccessToken(token);
-            return true;
+            return user.id === +req.params.id;
         } catch (e) {
             throw new UnauthorizedException();
         }

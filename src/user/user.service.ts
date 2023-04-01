@@ -3,17 +3,14 @@ import {InjectModel} from "@nestjs/sequelize";
 import {UserModel} from "./model/user.model";
 import {RoleService} from "../role/role.service";
 import {RoleModel} from "../role/model/role.model";
-import {CityModel} from "../city/model/city.model";
 import {CityService} from "../city/city.service";
 import {ResponseUserDto} from "./dto/response-user.dto";
 import {AddRoleDto} from "./dto/add-role.dto";
 import {UpdateUserDto} from "./dto/update-user.dto";
 import {UpdatePasswordDto} from "./dto/update-password.dto";
 import * as bcrypt from "bcryptjs";
-import {RegistrationUserDto} from "../auth/dto/registration-user.dto";
 import {TeamModel} from "../team/model/team.model";
 import {TeamService} from "../team/team.service";
-import {log} from "util";
 import {CreateUserDto} from "./dto/create-user.dto";
 
 @Injectable()
@@ -22,6 +19,20 @@ export class UserService {
                 private roleService: RoleService,
                 private cityService: CityService,
                 private teamService: TeamService) {}
+
+    async create(dto: CreateUserDto): Promise<UserModel> {
+        const user: UserModel = await this.userRepository.create(dto);
+        const role: RoleModel = await this.roleService.getByValue("CLIENT");
+        await user.$set('roles', [role.id]);
+        user.roles = [role];
+        user.teams = [];
+        return user;
+    }
+
+    async getAll(): Promise<ResponseUserDto[]> {
+        const users: UserModel[] = await this.userRepository.findAll({include: {all: true}});
+        return users.map(user => new ResponseUserDto(user));
+    }
 
     // GET: get user by id controller
     async getById(id: number): Promise<ResponseUserDto> {
@@ -35,19 +46,19 @@ export class UserService {
     // PUT: update user
     async update(id: number, dto: UpdateUserDto): Promise<ResponseUserDto> {
         const candidate: ResponseUserDto = await this.getById(id);
-        if (dto.email !== candidate.email) {
+        if (dto.email && dto.email !== candidate.email) {
             const candidate = await this.getByEmail(dto.email);
             if (candidate) {
                 throw new HttpException({massage: "Пользователь с такой почтой уже существует"}, HttpStatus.BAD_REQUEST);
             }
         }
-        if (dto.phone !== candidate.phone) {
-            const candidate = await this.getByEmail(dto.email);
+        if (dto.phone && dto.phone !== candidate.phone) {
+            const candidate = await this.getByPhone(dto.phone);
             if (candidate) {
                 throw new HttpException({massage: "Пользователь с таким телефоном уже существует"}, HttpStatus.BAD_REQUEST);
             }
         }
-        if (dto.city_id !== candidate.city_id) {
+        if (dto.city_id && dto.city_id !== candidate.city_id) {
             await this.cityService.getById(dto.city_id);
         }
         await this.userRepository.update(dto, {where: {id}});
@@ -103,20 +114,6 @@ export class UserService {
         }
         await user.$remove('team', team.id);
         return {message: 'success'}
-    }
-
-    async create(dto: CreateUserDto): Promise<UserModel> {
-        const user: UserModel = await this.userRepository.create(dto);
-        const role: RoleModel = await this.roleService.getByValue("CLIENT");
-        await user.$set('roles', [role.id]);
-        user.roles = [role];
-        user.teams = [];
-        return user;
-    }
-
-    async getAll(): Promise<ResponseUserDto[]> {
-        const users: UserModel[] = await this.userRepository.findAll({include: {all: true}});
-        return users.map(user => new ResponseUserDto(user));
     }
 
     async getModelById(id: number): Promise<UserModel> {

@@ -6,6 +6,8 @@ import {SaveTokenDto} from "./dto/save-token.dto";
 import {InjectModel} from "@nestjs/sequelize";
 import {TokenModel} from "./model/token.model";
 import {UserService} from "../user/user.service";
+import {UserDataForTokenDto} from "./dto/user-data-for-token.dto";
+import {UserModel} from "../user/model/user.model";
 
 @Injectable()
 export class TokenService {
@@ -14,10 +16,11 @@ export class TokenService {
                 private jwtService: JwtService,
                 private userService: UserService) {}
 
-    generateTokens(user: ResponseUserDto): TokensDto {
+    generateTokens(user: UserModel): TokensDto {
+        const data = new UserDataForTokenDto(user);
         return {
-            accessToken: this.jwtService.sign({...user}, {expiresIn: '15m', secret: process.env.JWT_ACCESS_SECRET}),
-            refreshToken: this.jwtService.sign({...user}, {expiresIn: '72h', secret: process.env.JWT_REFRESH_SECRET})
+            accessToken: this.jwtService.sign({...data}, {expiresIn: '15m', secret: process.env.JWT_ACCESS_SECRET}),
+            refreshToken: this.jwtService.sign({...data}, {expiresIn: '72h', secret: process.env.JWT_REFRESH_SECRET})
         }
     }
 
@@ -54,7 +57,7 @@ export class TokenService {
         }
 
         //create new tokens with last data
-        const user: ResponseUserDto  = await this.userService.getById(userData.id);
+        const user: UserModel  = await this.userService.getModelById(userData.id);
         const tokens: TokensDto = this.generateTokens(user);
         await this.saveToken({user_id: user.id, refresh_token: tokens.refreshToken});
         return tokens;

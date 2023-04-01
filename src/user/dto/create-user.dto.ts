@@ -4,5 +4,4 @@ export class CreateUserDto {
     readonly phone: string;
     readonly password: string;
     readonly city_id: number;
-    readonly link: string;
 }
