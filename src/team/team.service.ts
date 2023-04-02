@@ -17,9 +17,12 @@ import * as process from "process";
 import {ResponseUserTeamDto} from "./dto/response-user-team.dto";
 import {ResponseUserDto} from "../user/dto/response-user.dto";
 import {ResponseTagDto} from "../tag/dto/response-tag.dto";
+import {FileModel} from "../file/model/file.model";
 
 @Injectable()
 export class TeamService {
+
+    TABLE = 'team';
     constructor(@InjectModel(TeamModel) private teamRepository: typeof TeamModel,
                 private tagService: TagService,
                 @Inject(forwardRef(() => UserService))
@@ -91,12 +94,13 @@ export class TeamService {
         return new ResponseTeamDto(updatedTeam);
     }
 
-    // async delete(id: number): Promise<{message: string}> {
-    //     const team: TeamModel = await this.getModelById(id);
-    //     await this.fileService.delete(team.image);
-    //     await this.teamRepository.destroy({where: {id}});
-    //     return {message: 'success'};
-    // }
+    // DELETE delete team
+    async delete(id: number): Promise<{message: string}> {
+        const team: TeamModel = await this.getModelById(id);
+        await this.teamRepository.destroy({where: {id}});
+        await this.deleteImage(id);
+        return {message: 'success'};
+    }
 
     // POST add tag
     async addTag(id: number, dto: string): Promise<ResponseTagDto[]> {
@@ -122,25 +126,21 @@ export class TeamService {
     }
 
     // PUT update image
-    // async updateImage(id: number, image: any): Promise<string> {
-    //     const team: TeamModel = await this.getModelById(id);
-    //     if (team.image) {
-    //         await this.fileService.update({filename: team.image, file: image})
-    //         return team.image;
-    //     } else {
-    //         const fileName: string = await this.fileService.create(image);
-    //         await this.teamRepository.update({image: fileName}, {where: {id}});
-    //         return fileName;
-    //     }
-    // }
+    async updateImage(id: number, image: any): Promise<{ message: string }> {
+        const fileBinary = await this.fileService.get({essence_table: this.TABLE, essence_id: id});
+        if (fileBinary) {
+            await this.fileService.update({essence_table: this.TABLE, essence_id: id, file: image.buffer})
+        } else {
+            await this.fileService.create({essence_table: this.TABLE, essence_id: id, file: image.buffer});
+        }
+        return {message: 'success'};
+    }
 
     // DELETE delete image
-    // async deleteImage(id: number): Promise<{message: string}> {
-    //     const team: TeamModel = await this.getModelById(id);
-    //     await this.fileService.delete(team.image);
-    //     await team.update({image: null});
-    //     return {message: 'success'};
-    // }
+    async deleteImage(id: number): Promise<{message: string}> {
+        await this.fileService.delete({essence_table: this.TABLE, essence_id: id});
+        return {message: 'success'};
+    }
 
     async getModelById(id: number): Promise<TeamModel> {
         const team: TeamModel = await this.teamRepository.findByPk(id, {include: {all: true}});
