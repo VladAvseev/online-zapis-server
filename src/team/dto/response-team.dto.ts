@@ -25,7 +25,7 @@ export class ResponseTeamDto {
         this.city = team.city;
         this.admin_id = team.admin_id;
         this.address = team.address;
-        this.tags = team.tags.map(tag => new ResponseTagDto(tag));
-        this.masters = team.masters.map(master => new ResponseMasterDto(master));
+        this.tags = team.tags ? team.tags.map(tag => new ResponseTagDto(tag)) : [];
+        this.masters = team.masters ? team.masters.map(master => new ResponseMasterDto(master)) : [];
     }
 }

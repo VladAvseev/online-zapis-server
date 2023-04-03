@@ -52,9 +52,10 @@ export class UserController {
         return this.userService.addTeam(user_id, team_id);
     }
 
-    @Delete('/team/:id')
+    @Delete(':id/team/:id')
     @UseGuards(UserIdAuthGuard)
-    removeTeam(@Param('id') teamId: number, @Body() dto: {user: ResponseUserDto}) {
-        return this.userService.removeTeam(teamId, dto.user);
+    removeTeam(@Param('id') user_id: number,
+               @Param('team_id') team_id: number) {
+        return this.userService.removeTeam(user_id, team_id);
     }
 }

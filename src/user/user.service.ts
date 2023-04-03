@@ -108,9 +108,9 @@ export class UserService {
     }
 
     // DELETE: remove team from user saves
-    async removeTeam(teamId: number, dto: ResponseUserDto): Promise<{message: string}> {
-        const user: UserModel = await this.getModelById(dto.id);
-        const team: TeamModel = await this.teamService.getModelById(teamId);
+    async removeTeam(user_id: number, team_id): Promise<{message: string}> {
+        const user: UserModel = await this.getModelById(user_id);
+        const team: TeamModel = await this.teamService.getModelById(team_id);
         if (!user.teams.map(team => team.id).includes(team.id)) {
             throw new HttpException({message: 'Данной команды нет в избранном'}, HttpStatus.BAD_REQUEST);
         }
